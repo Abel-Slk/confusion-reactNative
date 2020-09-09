@@ -3,7 +3,8 @@ import Menu from './MenuComponent';
 import { DISHES } from '../shared/dishes';
 import DishDetail from './DishDetailComponent';
 import { ScrollView, View, Platform } from 'react-native';
-import { createStackNavigator } from '@react-navigation/native';
+import { createStackNavigator } from 'react-navigation'; // instead of the latest version - '@react-navigation/native'. IMPORTANT NOTE: I had to remove latest versions of react-native-elements and react-navigation that I decided to install initially and had to install pld versions that Muppala was using - cause otherwise I wasn't able to get the app to work!.. And even then I got an error described at https://stackoverflow.com/questions/60944091/taskqueue-error-with-task-undefined-is-not-an-object-evaluating-this-view ! Perhaps cause I created the app differently from Muppala - cause I wasn't even able to create it using create-react-native-app like he was doing! So I used the latest way! And the error described at SO - I solved it using the second way in Leonid's answer
+
 
 // creating a new component called MenuNavigator component which is a StackNavigator component:
 const MenuNavigator = createStackNavigator( // https://reactnavigation.org/docs/upgrading-from-4.x#configuring-the-navigator
@@ -38,7 +39,7 @@ export default class Main extends React.Component {
             // <ScrollView> //initially had <View style={{flex: 1}}> here - just sth to enclose stuff into cause we have multiple elements here (like we did with React.Fragment in React) - but View didn't allow to scroll content! (Muppala didn't notice this cause he was testing on a tablet where everything was fitting the screen!) ScrollView seems to be pretty much the same as View (it inherits Views props) - but it does allow scrolling! See http://reactnative.dev/docs/scrollview 
            // Note: this is a temp solution - throws a warning about ScrollView conflicting with Flatlist - and better make the links go to other pages/view - cause otherwise unless you scroll down you won't see the dish! This gotta be reworked! Just gotta move opening the card on press to a diff view! And then can change ScrollView back to view - and then the conflict between ScrollView and FlatList with be solved!
 
-            <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}> {/* Platform from react-native gives me access to information about the specific platform on which my react-native app is running. So you can ask questions like this here: if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
+            <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>{/* Platform from react-native gives me access to information about the specific platform on which my react-native app is running. So you can ask questions like this here: if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
 
                 <MenuNavigator />{/* now doing MenuNavigator wrapped in a View instead of Menu and DishDetail wrapped in a ScrollView! */}
                 

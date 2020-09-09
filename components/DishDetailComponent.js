@@ -15,17 +15,25 @@ function RenderDish(props) {
     const dish = props.dish;
     if (dish != null) {
         return (
-            <Card>
-                <Card.Title>{dish.name}</Card.Title>
-
-                <Card.Image source={require('./images/uthappizza.png')}>
-                
-                </Card.Image>
-                <Text style={{margin: 10}}>
+            <Card
+                featuredTitle={dish.name}
+                image={require('./images/uthappizza.png')}>
+                    <Text style={{margin: 10}}>
                         {dish.description}
                     </Text>
-                
             </Card>
+            
+            
+            // <Card>
+            //     <Card.Title>{dish.name}</Card.Title>
+
+            //     <Card.Image source={require('./images/uthappizza.png')}>
+                
+            //     </Card.Image>
+            //     <Text style={{margin: 10}}>
+            //             {dish.description}
+            //     </Text>
+            // </Card>
         );
     }
     else {

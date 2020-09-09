@@ -22,15 +22,22 @@ class Menu extends React.Component {
         // when you use a navigator, the navigation obj is one of the props that are AUTOMATICALLY passed to all the components in the navigator. So I am going to extract that out here. I'm going to need this in order to pass the information from menu component when I press on an item to the dish detail component through the navigator
         const { navigate } = this.props.navigation; // destructuring of an obj: from the navigation object copy the prop called navigate to const navigate (see 5_rest_spread.js)
 
-        const renderMenuItem = ({ item }) => ( // item is the current element of the data array in FlatList
-            <ListItem onPress={() => navigate('DishDetail', { dishId: item.id })}>{/* means navigate to DishDetail and pass it a param dishId with the value item.id. I specify here the name of the OTHER component - Dishdetail. Because when we configured navigator in the main component, we specified the two as Menu and Dishdetail. And in addition to navigating to that, I also use the second optional param of navigate() to to pass a parameter to DishDetail. That's how I am passing information from one component to the other component in the stack navigator. (We'll be able to retrieve the passed param in DishDetail using navigation.getParam()) */}
+        const renderMenuItem = ({ item, index }) => ( // item is the current element of the data array in FlatList
+            <ListItem
+                key={index}
+                title={item.name}
+                subtitle={item.description}
+                hideChevron={true}
+                leftAvatar={{ source: require('./images/uthappizza.png')}} 
+                onPress={() => navigate('DishDetail', { dishId: item.id })}
+            >{/* means navigate to DishDetail and pass it a param dishId with the value item.id. I specify here the name of the OTHER component - Dishdetail. Because when we configured navigator in the main component, we specified the two as Menu and Dishdetail. And in addition to navigating to that, I also use the second optional param of navigate() to to pass a parameter to DishDetail. That's how I am passing information from one component to the other component in the stack navigator. (We'll be able to retrieve the passed param in DishDetail using navigation.getParam()) */}
             
-                <Avatar rounded source={require('./images/uthappizza.png')} />
+                {/* <Avatar rounded source={require('./images/uthappizza.png')} />
         
                 <ListItem.Content>
                     <ListItem.Title>{item.name}</ListItem.Title>
                     <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
-                </ListItem.Content>
+                </ListItem.Content> */}
         
                 {/* <ListItem.Chevron /> */}{/* if do want a chevron */}
             </ListItem>
