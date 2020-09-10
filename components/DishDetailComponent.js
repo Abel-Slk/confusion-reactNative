@@ -8,7 +8,7 @@ import { DISHES } from '../shared/dishes';
 
 
 
-// I'm going to make each of these components store their own state, and the reason, as I said, is later on I will implement a redux support for this application. Then I will simply connect each of these components directly to the reduxes too. This is one way of implementing it. Now, in the react course earlier, I had one main component which was the only one that was connected to the redux store. These are Two different ways of implementing how you interact with the redux store. Again, hold on to that thought, we'll come back to that in the next module. all the components will have the same state simply because this dishes is a shared object that we are importing. And so they will all have the same state anyway.
+// I'm going to make each of these components store their own state, and the reason, as I said, is later on I will implement a redux support for this application. Then I will simply connect each of these components directly to the redux store. This is one way of implementing it. Now, in the react course earlier, I had one main component which was the only one that was connected to the redux store. These are Two different ways of implementing how you interact with the redux store. Again, hold on to that thought, we'll come back to that in the next module. all the components will have the same state simply because this dishes is a shared object that we are importing
 
 
 function RenderDish(props) {
@@ -23,7 +23,7 @@ function RenderDish(props) {
                     </Text>
             </Card>
             
-            
+            // same using the latest version of react-native-elements:
             // <Card>
             //     <Card.Title>{dish.name}</Card.Title>
 
