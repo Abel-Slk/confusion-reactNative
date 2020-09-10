@@ -17,10 +17,11 @@ function RenderDish(props) {
         return (
             <Card
                 featuredTitle={dish.name}
-                image={require('./images/uthappizza.png')}>
-                    <Text style={{margin: 10}}>
-                        {dish.description}
-                    </Text>
+                image={require('./images/uthappizza.png')}
+            >
+                <Text style={{margin: 10}}>
+                    {dish.description}
+                </Text>
             </Card>
             
             // same using the latest version of react-native-elements:
