@@ -2,6 +2,8 @@ import React from 'react';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
 import DishDetail from './DishDetailComponent';
+import About from './AboutComponent';
+import Contact from './ContactComponent';
 import { View, Platform } from 'react-native';
 import { createStackNavigator, createDrawerNavigator } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 
@@ -36,7 +38,7 @@ const MenuNavigator = createStackNavigator( // https://reactnavigation.org/docs/
     }
 );
 
-// We'll create Home navigation using drawer navigation. But I'm still going to start creating it using exactly the same approach that we have used for the menu navigator:
+// We'll create our main navigator using drawer navigation. HomeNavigator, AboutNavigator and ContactNavigator components will be placed inside the drawer. we'll create them using exactly the same approach that we have used for the menu navigator:
 const HomeNavigator = createStackNavigator( // we'll use HomeNavigator later in the MainNavigator drawer navigator. The reason for creating the home navigator using createStackNavigator() is that it provides the status bar, a way of specifying the navigation and the title for that home. Without createStackNavigator() we don't get access to that. So even though there is only one screen here, I'm still putting it into createStackNavigator() and creating a stack navigator component which I'll use when I set up my drawer-based navigator
     {
         Home: { 
@@ -46,6 +48,44 @@ const HomeNavigator = createStackNavigator( // we'll use HomeNavigator later in 
     {
         // we don't need initialRouteName here cause we have only one screen
 
+        navigationOptions: { 
+            headerStyle: { 
+                backgroundColor: '#512DA8'
+            },
+            headerTintColor: '#fff', 
+            headerTitleStyle: { 
+                color: '#fff'
+            }
+        }
+    }
+);
+
+const AboutNavigator = createStackNavigator(
+    {
+        About: { 
+            screen: About
+        }
+    },
+    {
+        navigationOptions: { 
+            headerStyle: { 
+                backgroundColor: '#512DA8'
+            },
+            headerTintColor: '#fff', 
+            headerTitleStyle: { 
+                color: '#fff'
+            }
+        }
+    }
+);
+
+const ContactNavigator = createStackNavigator(
+    {
+        Contact: { 
+            screen: Contact
+        }
+    },
+    {
         navigationOptions: { 
             headerStyle: { 
                 backgroundColor: '#512DA8'
@@ -73,6 +113,20 @@ const MainNavigator = createDrawerNavigator(
                 title: 'Menu',
                 drawerLabel: 'Menu'
             }
+        },
+        About: {
+            screen: AboutNavigator,
+            navigationOptions: { 
+                title: 'About',
+                drawerLabel: 'About'
+            }
+        },
+        Contact: {
+            screen: ContactNavigator,
+            navigationOptions: { 
+                title: 'Contact',
+                drawerLabel: 'Contact'
+            }
         }
     },
     {
@@ -83,7 +137,7 @@ const MainNavigator = createDrawerNavigator(
 export default class Main extends React.Component {
     render() {
         return (
-            <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>{/* Platform from react-native gives me access to information about the specific platform on which my react-native app is running. So you can ask questions like this here: if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
+            <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>{/* if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
             
                 <MainNavigator />
             </View>

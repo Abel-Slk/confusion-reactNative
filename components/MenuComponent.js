@@ -49,7 +49,7 @@ class Menu extends React.Component {
         );
 
         return (
-            <SafeAreaView>{/* mb just move SafeAreaView to Main? To cover all possible contents? */}
+            <SafeAreaView>
               <FlatList
                 data={this.state.dishes} // takes an array of objects
                 renderItem={renderMenuItem} // how to render each item in the list (in the data array). the value of the renderItem attr has to be a FUNCTION -- and that function will AUTOMATICALLY behind the scenes receive an object with 3 props: { item, index, separators }!! (https://reactnative.dev/docs/flatlist#renderitem) So it's a la <Route> with its { history, match, location }!! And We may use any of the 3 props if we want - and in our implementation of renderMenuItem() we've decided to use only { item }!
