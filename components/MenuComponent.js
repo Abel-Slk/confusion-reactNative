@@ -24,7 +24,6 @@ class Menu extends React.Component {
         // when you use a navigator, the navigation obj is one of the props that are AUTOMATICALLY passed to all the components in the navigator. I'll extract here from the navigation obj its property navigation.navigate(). 
         // We'll use navigate() to navigate from Menu to DishDetail when I press on an item and also to pass along the way a param containing the dish id. We'll to retrieve the passed param in DishDetail using navigation.getParam() 
 
-
         const renderMenuItem = ({ item, index }) => ( // renderMenuItem receives into item the current element of the data array in FlatList
             <ListItem
                 key={index}

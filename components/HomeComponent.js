@@ -38,7 +38,7 @@ class Home extends React.Component {
     }
 
     static navigationOptions = { 
-        title: 'Home' 
+        title: 'Home' // this will show the title in the header of the view
     };
 
     render() {

@@ -4,8 +4,9 @@ import Menu from './MenuComponent';
 import DishDetail from './DishDetailComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
-import { View, Platform } from 'react-native';
-import { createStackNavigator, createDrawerNavigator } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
+import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
+import { Icon } from 'react-native-elements';
 
 // IMPORTANT NOTE: I had to remove latest versions of react-native-elements and react-navigation that I decided to install initially and had to install old versions that Muppala was using - cause otherwise I wasn't able to get the app to work!.. And even then I got an error described at https://stackoverflow.com/questions/60944091/taskqueue-error-with-task-undefined-is-not-an-object-evaluating-this-view - Perhaps cause I created the app differently from Muppala - cause I wasn't even able to create it using create-react-native-app like he was doing! So I used the latest way! And the error described at SO - I solved it using the second way in Leonid's answer in the link
 // so changing versions is dangerous! Might easily break the code! Even the react-navigation docs themselves give reasons about when you need to upgrade to the latest version and when you DON'T: https://reactnavigation.org/docs/upgrading-from-4.x#configuring-the-navigator Also, this article https://chinloongtan.com/blog/upgrading-react-native-project/ describes in detail how upgrading can break everything - and advises to upgrade only when absolutely necessary and when there's no alternative!! So I really better stick with Muppala's versions whenever possible!!!..
@@ -13,16 +14,24 @@ import { createStackNavigator, createDrawerNavigator } from 'react-navigation'; 
 
 // creating a new component called MenuNavigator - a StackNavigator component:
 const MenuNavigator = createStackNavigator( // https://reactnavigation.org/docs/upgrading-from-4.x#configuring-the-navigator
-// two params - two objects: first an object for configuration where you specify the screens. And then the second obj where we can specify some navigation options
+// two params - two objects: first an obj for configuration where you specify the screens. And then the second obj where we can specify some navigation options
     {
         Menu: { // when you make the choice called Menu, navigate to the screen Menu
-            screen: Menu // a short version for Menu: {screen: Menu} is just Menu: Menu. But with this approach, we can add additional options if we want (besides the screen prop). you will see me using both kinds
+            screen: Menu, // a short version for Menu: {screen: Menu} is just Menu: Menu. But with the full form, we can also add additional options if we want (besides the screen prop). you will see me using both kinds
+
+            // include the toggle button on the Menu screen/view:
+            navigationOptions: ({ navigation }) => ({ // returns an obj
+            // we've changed this navigationOptions from an obj to a function returning an obj - cause now we want to pass a param to it! So we've changed here navigationOptions: {...} to navigationOptions: ({ navigation }) => ({...})
+            // navigationOptions can be defined as an obj or as a function. This function gets the navigation props as a parameter. (so I guess we implement navigationOptions as an obj when we don't need no params, and as a function that returns an obj when we do need to pass sth to navigationOptions?) So from the navigation props, I'm going to extract out navigation. And inside this arrow function we'll specify additional navigation options
+                headerLeft: <Icon name='menu' size={26} color='white' onPress={() => navigation.toggleDrawer()} /> // headerLeft will add whatever we supply here to the left of the header in that status bar of this view (the Menu view). We'll add this to all other navigators/views as well. note that we have name='menu' for all components, not just in Menu - cause 'menu' is just the name of that Icon
+            })
+            
         },  
         
         DishDetail: { 
             screen: DishDetail 
+            // don't need no toggle button here cause we'll have automatically created back button there to go back to Menu!
         }
-        // now my main component is ready to receive these two components and then build a state navigator out of them
     },
     {
         initialRouteName: 'Menu', // to start this StackNavigator with Menu as the first screen (we can choose here from the options that we have above - either Menu or DishDetail)
@@ -30,16 +39,16 @@ const MenuNavigator = createStackNavigator( // https://reactnavigation.org/docs/
             headerStyle: { // header for our StackNavigator
                 backgroundColor: '#512DA8'
             },
-            headerTintColor: '#fff', // This'll be used for any icons that you use in your headerStyle
-            headerTitleStyle: { // This is for the title in the header 
+            headerTintColor: '#fff', // This'll be used for any icons in the header
+            headerTitleStyle: { 
                 color: '#fff'
             }
         }
     }
 );
 
-// We'll create our main navigator using drawer navigation. HomeNavigator, AboutNavigator and ContactNavigator components will be placed inside the drawer. we'll create them using exactly the same approach that we have used for the menu navigator:
-const HomeNavigator = createStackNavigator( // we'll use HomeNavigator later in the MainNavigator drawer navigator. The reason for creating the home navigator using createStackNavigator() is that it provides the status bar, a way of specifying the navigation and the title for that home. Without createStackNavigator() we don't get access to that. So even though there is only one screen here, I'm still putting it into createStackNavigator() and creating a stack navigator component which I'll use when I set up my drawer-based navigator
+// We'll create our main navigator using drawer navigation. HomeNavigator, AboutNavigator and ContactNavigator components will be placed inside the drawer. we'll create each of them using the same approach as for the menu navigator:
+const HomeNavigator = createStackNavigator( // The reason for creating the home navigator using createStackNavigator() is that it provides the status bar, a way of specifying the navigation and the title for that home. Without createStackNavigator() we don't get access to that. So even though there is only one screen here, I'm still putting it into createStackNavigator()
     {
         Home: { 
             screen: Home 
@@ -48,34 +57,38 @@ const HomeNavigator = createStackNavigator( // we'll use HomeNavigator later in 
     {
         // we don't need initialRouteName here cause we have only one screen
 
-        navigationOptions: { 
+        navigationOptions: ({ navigation }) => ({
             headerStyle: { 
                 backgroundColor: '#512DA8'
             },
             headerTintColor: '#fff', 
             headerTitleStyle: { 
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
     }
 );
 
-const AboutNavigator = createStackNavigator(
+const AboutNavigator = createStackNavigator( // ~~ the About view
     {
         About: { 
             screen: About
         }
     },
     {
-        navigationOptions: { 
+        navigationOptions: ({ navigation }) => ({ 
             headerStyle: { 
                 backgroundColor: '#512DA8'
             },
             headerTintColor: '#fff', 
             headerTitleStyle: { 
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
     }
 );
 
@@ -86,55 +99,115 @@ const ContactNavigator = createStackNavigator(
         }
     },
     {
-        navigationOptions: { 
+        navigationOptions: ({ navigation }) => ({ 
             headerStyle: { 
                 backgroundColor: '#512DA8'
             },
             headerTintColor: '#fff', 
             headerTitleStyle: { 
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
     }
 );
-// and now we finally create a drawer navigator:
+
+const CustomDrawerContentComponent = props => ( // the configuration of content layout will be used in our MainNavigator drawer component
+    <ScrollView>
+        <SafeAreaView style={styles.container} 
+            forceInset={{ top: 'always', horizontal: 'never' }}>{/* SafeAreaView is specifically for iPhone X and defines a part of the area as a safe area where nothing else will be laid out. See more at https://reactnavigation.org/docs/handling-safe-area/ */}
+            {/* top: 'always', so this side drawer will be displayed on top, even covering the status bar on top */}
+
+            <View style={styles.drawerHeader}>
+                <View styles={{ flex: 1 }}>{/* https://stackoverflow.com/questions/37386244/what-does-flex-1-mean */}
+                {/* I specified flex: 1 for the first View and flex: 2 for the second, so the second View will occupy twice the amount of space horizontally as the first. So if the total amount of space in your header horizontally is divided into three units, first will occupy 1 unit and second will occupy 2 units */}
+                    <Image source={require('./images/logo.png')}
+                        style={styles.drawerImage} />
+                </View>
+
+                <View style={{ flex: 2 }}>
+                    <Text style={styles.drawerHeaderText}>Ristorante Con Fusion</Text>
+                </View>
+            </View>
+
+            <DrawerItems {...props} />{/* DrawerItems is what is automatically constructed by the createDrawerNavigator that we use in MainNavigator */}
+            {/* ...props: Whatever the props are, just pass them all to the DrawerItems component (spread those props!) */}
+        </SafeAreaView>
+    </ScrollView>
+);
+
+// and finally we collect all those into our drawer navigator:
 const MainNavigator = createDrawerNavigator(
     {
         Home: {
             screen: HomeNavigator,
-            navigationOptions: { // The reason I specifically use the navigation options is that I need to set up the drawer label here
-                title: 'Home',
-                drawerLabel: 'Home'
+            navigationOptions: {
+                title: 'Home', // not sure what title and drawerLabel do here - tried removing them and didn't see any difference! The title is still 'Home' in the drawer - it's probably received from the HoveNavigator screen, which receives it from the Home component!
+                drawerLabel: 'Home',
+                drawerIcon: ({ tintColor }) => ( // drawerIcon will receive (automatically!) tintColor as one of the params (where from though? I guess can see in the docs if necessary - but it might be deprecated anyway already). tintColor will specify how to render the icon in the drawer. this is specified as an arrow function
+                    <Icon 
+                        name='home' 
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                )
             }
         },
         Menu: {
             screen: MenuNavigator,
             navigationOptions: { 
                 title: 'Menu',
-                drawerLabel: 'Menu'
+                drawerLabel: 'Menu',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon 
+                        name='list' 
+                        type='font-awesome'
+                        size={22}// made it a bit smaller cause looks big
+                        color={tintColor} 
+                    />
+                )
             }
         },
         About: {
             screen: AboutNavigator,
             navigationOptions: { 
                 title: 'About',
-                drawerLabel: 'About'
+                drawerLabel: 'About',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon 
+                        name='info-circle' 
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                )
             }
         },
         Contact: {
             screen: ContactNavigator,
             navigationOptions: { 
                 title: 'Contact',
-                drawerLabel: 'Contact'
+                drawerLabel: 'Contact',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon 
+                        name='address-card' 
+                        type='font-awesome'
+                        size={22}
+                        color={tintColor} 
+                    />
+                )
             }
         }
     },
     {
-        drawerBackgroundColor: '#D1C4E9'
+        drawerBackgroundColor: '#D1C4E9',
+        contentComponent: CustomDrawerContentComponent // this is where we specify the layout of the drawer to be what I have specified in here. Now, how did I figure this out? Reading the documentation. So reading the documentation reveals a lot of interesting information. Now for your benefit, I've already done the reading, and then put them into use in the exercise so that you can see some of these in action
     }
 );
 
-export default class Main extends React.Component {
+class Main extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>{/* if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
@@ -144,3 +217,29 @@ export default class Main extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    drawerHeader: {
+        backgroundColor: '#512DA8',
+        height: 140,
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1,
+        flexDirection: 'row' // so the logo and the restaurant name inside the drawerHeader will be laid out along the row axis, rather than in the column axis
+    },
+    drawerHeaderText: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold'
+    },
+    drawerImage: {
+        margin: 10,
+        width: 80,
+        height: 60
+    }
+});
+
+export default Main;
