@@ -113,7 +113,7 @@ const ContactNavigator = createStackNavigator(
     }
 );
 
-const CustomDrawerContentComponent = props => ( // the configuration of content layout will be used in our MainNavigator drawer component
+const CustomDrawerContentComponent = props => ( // this is the configuration of content layout that we'll use in our MainNavigator drawer component
     <ScrollView>
         <SafeAreaView style={styles.container} 
             forceInset={{ top: 'always', horizontal: 'never' }}>{/* SafeAreaView is specifically for iPhone X and defines a part of the area as a safe area where nothing else will be laid out. See more at https://reactnavigation.org/docs/handling-safe-area/ */}
@@ -132,7 +132,7 @@ const CustomDrawerContentComponent = props => ( // the configuration of content 
             </View>
 
             <DrawerItems {...props} />{/* DrawerItems is what is automatically constructed by the createDrawerNavigator that we use in MainNavigator */}
-            {/* ...props: Whatever the props are, just pass them all to the DrawerItems component (spread those props!) */}
+            {/* ...props: Whatever the props are, just pass them all to the DrawerItems component (spread those props!) (and it looks like CustomDrawerContentComponent will AUTOMATICALLY receive as props all the drawer items when we pass it to MainNavigator?) */}
         </SafeAreaView>
     </ScrollView>
 );
@@ -145,7 +145,7 @@ const MainNavigator = createDrawerNavigator(
             navigationOptions: {
                 title: 'Home', // not sure what title and drawerLabel do here - tried removing them and didn't see any difference! The title is still 'Home' in the drawer - it's probably received from the HoveNavigator screen, which receives it from the Home component!
                 drawerLabel: 'Home',
-                drawerIcon: ({ tintColor }) => ( // drawerIcon will receive (automatically!) tintColor as one of the params (where from though? I guess can see in the docs if necessary - but it might be deprecated anyway already). tintColor will specify how to render the icon in the drawer. this is specified as an arrow function
+                drawerIcon: ({ tintColor }) => ( // drawerIcon will receive (automatically!) tintColor as one of the params (where from though? I guess can see in the docs if necessary - but it might be deprecated already anyway). tintColor will specify how to render the icon in the drawer. this is specified as an arrow function
                     <Icon 
                         name='home' 
                         type='font-awesome'
