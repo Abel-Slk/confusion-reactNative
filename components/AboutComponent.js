@@ -1,7 +1,14 @@
 import React from 'react';
 import { ScrollView, Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { LEADERS } from '../shared/leaders';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+const mapStateToProps = state => {
+    return {
+        leaders: state.leaders // will become available in the connected component as this.props.leaders
+    }
+}
 
 function History() {
     return (
@@ -22,7 +29,7 @@ const renderLeaderItem = ({ item, index }) => (
         title={item.name}
         subtitle={item.description}
         hideChevron={true}
-        leftAvatar={{ source: require('./images/alberto.png')}} 
+        leftAvatar={{ source: { uri: baseUrl + item.image }}} 
     >
     </ListItem>
 );
@@ -40,13 +47,6 @@ function Leaders({ leaders }) {
 }
 
 class About extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            leaders: LEADERS
-        }
-    }
 
     static navigationOptions = { 
         title: 'About' 
@@ -57,11 +57,11 @@ class About extends React.Component {
             <ScrollView>
                 <History />
 
-                <Leaders leaders={this.state.leaders} />
+                <Leaders leaders={this.props.leaders.leaders} />
             </ScrollView>
         );
     }
 
 }
 
-export default About;
+export default connect(mapStateToProps)(About); // in the React course earlier, I had one main component which was the only one that was connected to the redux store. Here I connect EACH component directly to the redux store. These are Two different ways of implementing how you interact with the redux store

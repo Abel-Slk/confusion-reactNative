@@ -1,16 +1,15 @@
 import React from 'react';
 import { View, Text, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
-// View is a container for a set of information. https://reactnative.dev/docs/view
-// React Native uses NATIVE components instead of web components in building the view. So instead of using typical HTML-like elements that we did with React, we'll be using built-in React Native components which are mapped into corresponding native UI widgets in both Android and iOS. ex Text is mapped into the text-view component in Android and into the UI-text in iOS. So when you encounter any of the components in React Native, they would have a correspondence with the corresponding Native component in both Android and iOS
-
-
-
-// I'm going to make each of these components store their own state, and the reason, as I said, is later on I will implement a redux support for this application. Then I will simply connect each of these components directly to the redux store. This is one way of implementing it. Now, in the react course earlier, I had one main component which was the only one that was connected to the redux store. These are Two different ways of implementing how you interact with the redux store. Again, hold on to that thought, we'll come back to that in the next module. all the components will have the same state simply because this dishes is a shared object that we are importing
-
+const mapStateToProps = state => {
+    return {
+        dishes: state.dishes,
+        comments: state.comments
+    }
+}
 
 function RenderDish(props) {
     const dish = props.dish;
@@ -18,7 +17,7 @@ function RenderDish(props) {
         return (
             <Card
                 featuredTitle={dish.name}
-                image={require('./images/uthappizza.png')}
+                image={{ uri: baseUrl + dish.image }}
             >
                 <Text style={{margin: 10}}>
                     {dish.description}
@@ -89,8 +88,6 @@ class DishDetail extends React.Component {
         super(props);
 
         this.state = {
-            dishes: DISHES,
-            comments: COMMENTS,
             favorites: [] // as I select dishes and mark them as favorites, then they will be added into the favorites array. And then I can use the favorites array to check to see if my dish is a favorite dish or not
         };
     }
@@ -109,15 +106,15 @@ class DishDetail extends React.Component {
         return (
             <ScrollView>
                 <RenderDish 
-                    dish={this.state.dishes[+dishId]}// I need to select the dish for which the dishId is what I have obtained as the incoming parameter above. putting a + before dishId (which is a string) will turn that in to the equivalent number there, and so that I will use as the index in to the dishes here 
+                    dish={this.props.dishes.dishes[+dishId]}// I need to select the dish for which the dishId is what I have obtained as the incoming parameter above. putting a + before dishId (which is a string) will turn that in to the equivalent number there, and so that I will use as the index in to the dishes here 
                     favorite={this.state.favorites.some(el => el === dishId)}// favorite will be true or false. some() returns true if there exists an item (at least one) in the array for which the callback function inside some() returns true. So I will check every element in this array to see if that element Is the same as dishId. And favorite will be true if dishId already exists in favorites
                     onPressing={() => this.markFavorite(dishId)}
                 />
 
-                <RenderComments comments={this.state.comments.filter(comment => comment.dishId === dishId)} />
+                <RenderComments comments={this.props.comments.comments.filter(comment => comment.dishId === dishId)} />
             </ScrollView>
         );
     }
 }
 
-export default DishDetail;
+export default connect(mapStateToProps)(DishDetail);

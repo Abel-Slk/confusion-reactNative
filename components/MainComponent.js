@@ -7,9 +7,24 @@ import Contact from './ContactComponent';
 import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { fetchDishes, fetchComments, fetchLeaders, fetchPromos } from '../redux/ActionCreators';
 
 // IMPORTANT NOTE: I had to remove latest versions of react-native-elements and react-navigation that I decided to install initially and had to install old versions that Muppala was using - cause otherwise I wasn't able to get the app to work!.. And even then I got an error described at https://stackoverflow.com/questions/60944091/taskqueue-error-with-task-undefined-is-not-an-object-evaluating-this-view - Perhaps cause I created the app differently from Muppala - cause I wasn't even able to create it using create-react-native-app like he was doing! So I used the latest way! And the error described at SO - I solved it using the second way in Leonid's answer in the link
 // so changing versions is dangerous! Might easily break the code! Even the react-navigation docs themselves give reasons about when you need to upgrade to the latest version and when you DON'T: https://reactnavigation.org/docs/upgrading-from-4.x#configuring-the-navigator Also, this article https://chinloongtan.com/blog/upgrading-react-native-project/ describes in detail how upgrading can break everything - and advises to upgrade only when absolutely necessary and when there's no alternative!! So I really better stick with Muppala's versions whenever possible!!!..
+
+const mapStateToProps = state => {
+    return {
+    }
+};
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchDishes: () => dispatch(fetchDishes()),
+        fetchComments: () => dispatch(fetchComments()),
+        fetchPromos: () => dispatch(fetchPromos()),
+        fetchLeaders: () => dispatch(fetchLeaders()),
+    }
+};
 
 
 // creating a new component called MenuNavigator - a StackNavigator component:
@@ -208,6 +223,14 @@ const MainNavigator = createDrawerNavigator(
 );
 
 class Main extends React.Component {
+
+    componentDidMount() {
+        this.props.fetchDishes();
+        this.props.fetchComments();
+        this.props.fetchPromos();
+        this.props.fetchLeaders();
+    }
+
     render() {
         return (
             <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>{/* if this app is running on an ios device, then we will configure the paddingTop to be 0, otherwise Expo.Constants.StatusBarHeight in android will give enough space on the top for the status bar to be displayed */}
@@ -242,4 +265,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
