@@ -137,7 +137,7 @@ export const fetchLeaders = () => dispatch => {
         .then(response => response.json()) 
         .then(leaders => dispatch(addLeaders(leaders))) 
         .catch(error => dispatch(leadersFailed(error.message)));
-}
+};
 
 export const leadersLoading = () => ({ 
     type: ActionTypes.LEADERS_LOADING
@@ -151,5 +151,16 @@ export const leadersFailed = errmess => ({
 export const addLeaders = leaders => ({ 
     type: ActionTypes.ADD_LEADERS,
     payload: leaders
+});
+
+export const postFavorite = dishId => dispatch => {
+    setTimeout(() => { // I will simulate a server delay 
+        dispatch(addFavorite(dishId));
+    }, 2000);
+};
+
+export const addFavorite = dishId => ({
+    type: ActionTypes.ADD_FAVORITE,
+    payload: dishId
 });
 

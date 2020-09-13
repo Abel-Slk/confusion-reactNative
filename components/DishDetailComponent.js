@@ -3,13 +3,16 @@ import { View, Text, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { postFavorite } from '../redux/ActionCreators';
 
-const mapStateToProps = state => {
-    return {
-        dishes: state.dishes,
-        comments: state.comments
-    }
-}
+const mapStateToProps = state => ({
+    dishes: state.dishes,
+    comments: state.comments,
+    favorites: state.favorites
+});
+const mapDispatchToProps = dispatch => ({
+    postFavorite: dishId => dispatch(postFavorite(dishId))
+});
 
 function RenderDish(props) {
     const dish = props.dish;
@@ -84,16 +87,9 @@ function RenderComments(props) {
 }
 
 class DishDetail extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            favorites: [] // as I select dishes and mark them as favorites, then they will be added into the favorites array. And then I can use the favorites array to check to see if my dish is a favorite dish or not
-        };
-    }
 
     markFavorite(dishId) {
-        this.setState({ favorites: this.state.favorites.concat(dishId) });
+        this.props.postFavorite(dishId);
     }
 
     static navigationOptions = { 
@@ -107,7 +103,7 @@ class DishDetail extends React.Component {
             <ScrollView>
                 <RenderDish 
                     dish={this.props.dishes.dishes[+dishId]}// I need to select the dish for which the dishId is what I have obtained as the incoming parameter above. putting a + before dishId (which is a string) will turn that in to the equivalent number there, and so that I will use as the index in to the dishes here 
-                    favorite={this.state.favorites.some(el => el === dishId)}// favorite will be true or false. some() returns true if there exists an item (at least one) in the array for which the callback function inside some() returns true. So I will check every element in this array to see if that element Is the same as dishId. And favorite will be true if dishId already exists in favorites
+                    favorite={this.props.favorites.some(el => el === dishId)}// favorite will be true or false. some() returns true if there exists an item (at least one) in the array for which the callback function inside some() returns true. So I will check every element in this array to see if that element Is the same as dishId. And favorite will be true if dishId already exists in favorites
                     onPressing={() => this.markFavorite(dishId)}
                 />
 
@@ -117,4 +113,4 @@ class DishDetail extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(DishDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(DishDetail);
