@@ -3,6 +3,7 @@ import { SafeAreaView, View, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
     return {
@@ -46,14 +47,28 @@ class Menu extends React.Component {
             </Tile>
         );
 
-        return (
-            <FlatList
-                data={this.props.dishes.dishes} // takes an array of objects
-                renderItem={renderMenuItem} // how to render each item in the list (in the data array). the value of the renderItem attr has to be a FUNCTION -- and that function will AUTOMATICALLY behind the scenes receive an object with 3 props: { item, index, separators }!! (https://reactnative.dev/docs/flatlist#renderitem) So it's a la <Route> with its { history, match, location }!! And We may use any of the 3 props if we want - and in our implementation of renderMenuItem() we've decided to use only { item }!
-                keyExtractor={item => item.id.toString()} // this takes an item of the array and uses its id as a key. when you render a list of items, you have to Supply a key for each item. FlatList supports a keyExtractor which extracts one of the props off each item in the array and use that as a key. in this case, every item in the dishes.js file has an id. So I'm going to use this as my key for my items in the list
-                // keyExtractor tells the list to use the ids for the react keys instead of the default key property (https://reactnative.dev/docs/flatlist#docsNav)
-            />
-        );
+        if (this.props.dishes.isLoading) {
+            return (
+                <Loading />
+            );
+        }
+        else if (this.props.dishes.errMess) {
+            return (
+                <View>
+                    <Text>{this.props.leaders.errMess}</Text>
+                </View>
+            );
+        }
+        else {
+            return (
+                <FlatList
+                    data={this.props.dishes.dishes} // takes an array of objects
+                    renderItem={renderMenuItem} // how to render each item in the list (in the data array). the value of the renderItem attr has to be a FUNCTION -- and that function will AUTOMATICALLY behind the scenes receive an object with 3 props: { item, index, separators }!! (https://reactnative.dev/docs/flatlist#renderitem) So it's a la <Route> with its { history, match, location }!! And We may use any of the 3 props if we want - and in our implementation of renderMenuItem() we've decided to use only { item }!
+                    keyExtractor={item => item.id.toString()} // this takes an item of the array and uses its id as a key. when you render a list of items, you have to Supply a key for each item. FlatList supports a keyExtractor which extracts one of the props off each item in the array and use that as a key. in this case, every item in the dishes.js file has an id. So I'm going to use this as my key for my items in the list
+                    // keyExtractor tells the list to use the ids for the react keys instead of the default key property (https://reactnative.dev/docs/flatlist#docsNav)
+                />
+            );
+        }
     }
   
 }
