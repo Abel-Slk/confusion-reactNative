@@ -4,6 +4,7 @@ import Menu from './MenuComponent';
 import DishDetail from './DishDetailComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
+import Reservation from './ReservationComponent';
 import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 import { Icon } from 'react-native-elements';
@@ -128,6 +129,27 @@ const ContactNavigator = createStackNavigator(
     }
 );
 
+const ReservationNavigator = createStackNavigator(
+    {
+        Reservation: { 
+            screen: Reservation
+        }
+    },
+    {
+        navigationOptions: ({ navigation }) => ({ 
+            headerStyle: { 
+                backgroundColor: '#512DA8'
+            },
+            headerTintColor: '#fff', 
+            headerTitleStyle: { 
+                color: '#fff'
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => ( // this is the configuration of content layout that we'll use in our MainNavigator drawer component
     <ScrollView>
         <SafeAreaView style={styles.container} 
@@ -135,7 +157,8 @@ const CustomDrawerContentComponent = props => ( // this is the configuration of 
             {/* top: 'always', so this side drawer will be displayed on top, even covering the status bar on top */}
 
             <View style={styles.drawerHeader}>
-                <View styles={{ flex: 1 }}>{/* https://stackoverflow.com/questions/37386244/what-does-flex-1-mean */}
+                
+                <View style={{ flex: 1 }}>{/* https://stackoverflow.com/questions/37386244/what-does-flex-1-mean */}
                 {/* I specified flex: 1 for the first View and flex: 2 for the second, so the second View will occupy twice the amount of space horizontally as the first. So if the total amount of space in your header horizontally is divided into three units, first will occupy 1 unit and second will occupy 2 units */}
                     <Image source={require('./images/logo.png')}
                         style={styles.drawerImage} />
@@ -147,7 +170,7 @@ const CustomDrawerContentComponent = props => ( // this is the configuration of 
             </View>
 
             <DrawerItems {...props} />{/* DrawerItems is what is automatically constructed by the createDrawerNavigator that we use in MainNavigator */}
-            {/* ...props: Whatever the props are, just pass them all to the DrawerItems component (spread those props!) (and it looks like CustomDrawerContentComponent will AUTOMATICALLY receive as props all the drawer items when we pass it to MainNavigator?) */}
+            {/* ...props: Whatever the props are, just pass them all to the DrawerItems component (spread those props!) (and it looks like CustomDrawerContentComponent will AUTOMATICALLY receive as props all the drawer items when we pass CustomDrawerContentComponent to MainNavigator?) */}
         </SafeAreaView>
     </ScrollView>
 );
@@ -214,11 +237,26 @@ const MainNavigator = createDrawerNavigator(
                     />
                 )
             }
+        },
+        Reservation: {
+            screen: ReservationNavigator,
+            navigationOptions: { 
+                title: 'Reserve Table',
+                drawerLabel: 'Reserve Table',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon 
+                        name='cutlery' 
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                )
+            }
         }
     },
     {
         drawerBackgroundColor: '#D1C4E9',
-        contentComponent: CustomDrawerContentComponent // this is where we specify the layout of the drawer to be what I have specified in here. Now, how did I figure this out? Reading the documentation. So reading the documentation reveals a lot of interesting information. Now for your benefit, I've already done the reading, and then put them into use in the exercise so that you can see some of these in action
+        contentComponent: CustomDrawerContentComponent // here we specify the layout of the drawer to be what I have specified in CustomDrawerContentComponent. how did I figure this out? Reading the documentation. So reading the documentation reveals a lot of interesting information
     }
 );
 
