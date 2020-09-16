@@ -4,6 +4,7 @@ import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComment } from '../redux/ActionCreators';
+import * as Animatable from 'react-native-animatable'; 
 
 const mapStateToProps = state => ({
     dishes: state.dishes,
@@ -20,35 +21,38 @@ function RenderDish(props) {
     const dish = props.dish;
     if (dish != null) {
         return (
-            <Card
-                featuredTitle={dish.name}
-                image={{ uri: baseUrl + dish.image }}
-            >
-                <Text style={{margin: 10}}>
-                    {dish.description}
-                </Text>
+            <Animatable.View animation='fadeInDown' duration={500} delay={0}>{/* fadeInDown for RenderDish and fadeInUp for RenderComments - so that they would move towards each other from top and bottom */}
 
-                <View style={styles.icons}>
-                    <Icon 
-                        raised // raised for the Icon displays the Icon in the form of a button, a rounded button. An interesting way of using it
-                        reverse // reverse will reverse the color. So Icon itself will be of one color, and then the reverse color will be shown to the surrounding part in the icon there
-                        name={props.favorite ? 'heart' : 'heart-o'}// Icon's name attr defines the icon pic. if it is a favorite then I will render a field, heart, to indicate that this is already a favorite dish. If it is not a favorite, I will render a heart with just the outline
-                        type='font-awesome'
-                        color='#f50'
-                        onPress={() => props.favorite ? console.log('Already favorite!') : props.onPressing()}// Icon has an attr onPress. when I press that, I'll check to see if this is already my favorite dish. if it is,  I will simply say 'Already favorite'. Otherwise I'll call props.onPressing() which we passed to RenderDish
-                    />
+                <Card
+                    featuredTitle={dish.name}
+                    image={{ uri: baseUrl + dish.image }}>
 
-                    <Icon 
-                        raised
-                        reverse
-                        name={'pencil'}// Icon's name attr takes the shortest name! The full FA name is 'fas fa-pencil'!! 
-                        type='font-awesome'
-                        color='#512DA8'
-                        onPress={() => props.toggleModal()}
-                    />
-                </View>
-                
-            </Card>
+                    <Text style={{margin: 10}}>
+                        {dish.description}
+                    </Text>
+
+                    <View style={styles.icons}>
+                        <Icon 
+                            raised // raised for the Icon displays the Icon in the form of a button, a rounded button. An interesting way of using it
+                            reverse // reverse will reverse the color. So Icon itself will be of one color, and then the reverse color will be shown to the surrounding part in the icon there
+                            name={props.favorite ? 'heart' : 'heart-o'}// Icon's name attr defines the icon pic. if it is a favorite then I will render a field, heart, to indicate that this is already a favorite dish. If it is not a favorite, I will render a heart with just the outline
+                            type='font-awesome'
+                            color='#f50'
+                            onPress={() => props.favorite ? console.log('Already favorite!') : props.onPressing()}// Icon has an attr onPress. when I press that, I'll check to see if this is already my favorite dish. if it is,  I will simply say 'Already favorite'. Otherwise I'll call props.onPressing() which we passed to RenderDish
+                        />
+
+                        <Icon 
+                            raised
+                            reverse
+                            name={'pencil'}// Icon's name attr takes the shortest name! The full FA name is 'fas fa-pencil'!! 
+                            type='font-awesome'
+                            color='#512DA8'
+                            onPress={() => props.toggleModal()}
+                        />
+                    </View>
+                    
+                </Card>
+            </Animatable.View>
             
             // same using the latest version of react-native-elements:
             // <Card>
@@ -97,13 +101,17 @@ function RenderComments(props) {
     }
 
     return (
-        <Card title="Comments">
-            <FlatList 
-                data={comments}
-                renderItem={renderCommentItem}
-                keyExtractor={item => item.id.toString()}
-            />
-        </Card>
+        <Animatable.View animation='fadeInUp' duration={500} delay={0}>
+
+            <Card title="Comments">
+                <FlatList 
+                    data={comments}
+                    renderItem={renderCommentItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </Card>
+
+        </Animatable.View>
     );
 }
 

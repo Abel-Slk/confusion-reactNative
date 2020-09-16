@@ -4,6 +4,7 @@ import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable'; 
 
 const mapStateToProps = state => {
     return {
@@ -25,26 +26,18 @@ class Menu extends React.Component {
         // We'll use navigate() to navigate from Menu to DishDetail when I press on an item and also to pass along the way a param containing the dish id. We'll to retrieve the passed param in DishDetail using navigation.getParam() 
 
         const renderMenuItem = ({ item, index }) => ( // renderMenuItem receives into item the current element of the data array in FlatList
-            <Tile // reworked ListItem into a Tile component
-                key={index}
-                title={item.name}
-                caption={item.description}
-                featured // to display it prominently
-                imageSrc={{ uri: baseUrl + item.image }} 
-                onPress={() => navigate('DishDetail', { dishId: item.id })}
-            >{/* means navigate to DishDetail and pass it a param dishId with the value item.id. (we configured the menu navigator in the main component with two screens - Menu and Dishdetail.) And in addition to navigating to that, I also use the second optional param of navigate() to to pass a param to DishDetail. That's how I am passing information from one component to the other component in the stack navigator. (We'll retrieve the passed param in DishDetail using navigation.getParam()) */}
-            
+            <Animatable.View animation='fadeInRightBig' duration={500}>
 
-                {/* same using the latest version of react-native-elements: */}
-                {/* <Avatar rounded source={require('./images/uthappizza.png')} />
-        
-                <ListItem.Content>
-                    <ListItem.Title>{item.name}</ListItem.Title>
-                    <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
-                </ListItem.Content> */}
-        
-                {/* <ListItem.Chevron /> */}{/* if do want a chevron */}
-            </Tile>
+                <Tile // reworked ListItem into a Tile component
+                    key={index}
+                    title={item.name}
+                    caption={item.description}
+                    featured // to display it prominently
+                    imageSrc={{ uri: baseUrl + item.image }} 
+                    onPress={() => navigate('DishDetail', { dishId: item.id })}// means navigate to DishDetail and pass it a param dishId with the value item.id. (we configured the menu navigator in the main component with two screens - Menu and Dishdetail.) And in addition to navigating to that, I also use the second optional param of navigate() to to pass a param to DishDetail. That's how I am passing information from one component to the other component in the stack navigator. (We'll retrieve the passed param in DishDetail using navigation.getParam())
+                />
+                
+            </Animatable.View>
         );
 
         if (this.props.dishes.isLoading) {
