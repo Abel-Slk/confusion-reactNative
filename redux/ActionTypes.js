@@ -20,4 +20,5 @@ export const ADD_FAVORITE = 'ADD_FAVORITE'; // when the server gets updated by P
 
 // export const POST_FAVORITE = 'POST_FAVORITE'; // Muppala wrote this - but we never used it!! And we didn't have POST action types in our React app either!
 
-// export const DELETE_FAVORITE = 'DELETE_FAVORITE'; // saw some guy having it
+export const DELETE_FAVORITE = 'DELETE_FAVORITE';
+
