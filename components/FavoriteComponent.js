@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, Alert } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -35,7 +35,24 @@ class Favorites extends React.Component {
                 {
                     text: 'Delete',
                     type: 'delete',
-                    onPress: () => this.props.deleteFavorite(item.id)
+                    onPress: () => {
+                        Alert.alert( // takes title, message, array of buttons
+                            'Delete Favorite?',
+                            'Are you sure you wish to delete the favorite dish ' + item.name + '?',
+                            [ // array of buttons
+                                { // cancel button
+                                    text: 'Cancel', 
+                                    onPress: () => console.log('Deletion of ' + item.name + ' was cancelled'),
+                                    style: 'cancel'
+                                },
+                                { 
+                                    text: 'OK', 
+                                    onPress: () => this.props.deleteFavorite(item.id)
+                                }
+                            ], // and we can also have an additional param with options: 
+                            { cancelable: false } // that means that for this alert dialog, the user either has to press "Cancel" explicitly or press "OK" explicitly. They can't just dismiss the dialogue. Note: @platform — android
+                        );
+                    }
                 }
             ];
 
