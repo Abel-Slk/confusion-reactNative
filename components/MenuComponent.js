@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, View, FlatList } from 'react-native';
+import { SafeAreaView, View, Text, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';

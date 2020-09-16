@@ -1,40 +1,7 @@
 import * as ActionTypes from './ActionTypes'; 
 import { baseUrl } from '../shared/baseUrl';
 
-// fetch comments: 
-
-export const fetchComments = () => dispatch => { 
-    return fetch(baseUrl + 'comments') 
-        .then(response => {
-            if (response.ok) { 
-                return response; 
-            }
-            else { 
-                let error = new Error('Error ' + response.status + ': ' + response.statusText); 
-                error.response = response;
-                throw error; 
-            }
-        }, 
-        error => {
-            let errmess = new Error(error.message); 
-            throw errmess; 
-        })
-        .then(response => response.json()) 
-        .then(comments => dispatch(addComments(comments)))
-        .catch(error => dispatch(commentsFailed(error.message)));
-}
-
-export const commentsFailed = errmess => ({ 
-    type: ActionTypes.COMMENTS_FAILED,
-    payload: errmess
-});
-
-export const addComments = comments => ({ 
-    type: ActionTypes.ADD_COMMENTS,
-    payload: comments
-});
-
-// fetch dishes:
+// dishes:
 
 export const fetchDishes = () => dispatch => {
 
@@ -73,7 +40,7 @@ export const addDishes = dishes => ({
     payload: dishes
 });
 
-// fetch promos:
+// promos:
 
 export const fetchPromos = () => dispatch => {  
 
@@ -113,7 +80,7 @@ export const addPromos = promos => ({
     payload: promos
 });
 
-// fetch leaders:
+// leaders:
 
 export const fetchLeaders = () => dispatch => {  
 
@@ -156,17 +123,40 @@ export const addLeaders = leaders => ({
 
 
 
-export const postFavorite = dishId => dispatch => {
-    setTimeout(() => { // I will simulate a server delay 
-        dispatch(addFavorite(dishId));
-    }, 2000);
-};
 
-export const addFavorite = dishId => ({
-    type: ActionTypes.ADD_FAVORITE,
-    payload: dishId
+
+// comments: 
+
+export const fetchComments = () => dispatch => { 
+    return fetch(baseUrl + 'comments') 
+        .then(response => {
+            if (response.ok) { 
+                return response; 
+            }
+            else { 
+                let error = new Error('Error ' + response.status + ': ' + response.statusText); 
+                error.response = response;
+                throw error; 
+            }
+        }, 
+        error => {
+            let errmess = new Error(error.message); 
+            throw errmess; 
+        })
+        .then(response => response.json()) 
+        .then(comments => dispatch(addComments(comments)))
+        .catch(error => dispatch(commentsFailed(error.message)));
+}
+
+export const commentsFailed = errmess => ({ 
+    type: ActionTypes.COMMENTS_FAILED,
+    payload: errmess
 });
 
+export const addComments = comments => ({ 
+    type: ActionTypes.ADD_COMMENTS,
+    payload: comments
+});
 
 
 export const addComment = comment => ({
@@ -176,12 +166,8 @@ export const addComment = comment => ({
 
 export const postComment = (dishId, rating, author, comment) => dispatch => {
 
-    // args: dishId will be received from the DishDetail component (inside which we'll be using postComment), while rating, author and comment args will be received from the inputs of the Form in the CommentForm component
-
-    // we create a new comment here (using the inputs from a Form) and then upload it on the server using fetch(). If the upload is successful, then we read that comment back from the server now, and - only after that - store it in our redux store. (The idea is to put in our store not what we created in our JS code here, but what we read from the server - so that's why we record it in the store only after downloading from the server)
-
     const newComment = { 
-        dishId: dishId, // assign to property the value of arg (pop-ups help!)
+        dishId: dishId, 
         rating: rating,
         author: author,
         comment: comment
@@ -192,3 +178,17 @@ export const postComment = (dishId, rating, author, comment) => dispatch => {
         dispatch(addComment(newComment));
     }, 2000);
 };
+
+
+// favorites:
+
+export const postFavorite = dishId => dispatch => {
+    setTimeout(() => { // simulating a server delay  
+        dispatch(addFavorite(dishId));
+    }, 2000);
+};
+
+export const addFavorite = dishId => ({
+    type: ActionTypes.ADD_FAVORITE,
+    payload: dishId
+});

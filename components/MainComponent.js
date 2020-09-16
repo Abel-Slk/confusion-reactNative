@@ -5,6 +5,7 @@ import DishDetail from './DishDetailComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoriteComponent';
 import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 import { Icon } from 'react-native-elements';
@@ -150,6 +151,27 @@ const ReservationNavigator = createStackNavigator(
     }
 );
 
+const FavoritesNavigator = createStackNavigator(
+    {
+        Favorites: { 
+            screen: Favorites
+        }
+    },
+    {
+        navigationOptions: ({ navigation }) => ({ 
+            headerStyle: { 
+                backgroundColor: '#512DA8'
+            },
+            headerTintColor: '#fff', 
+            headerTitleStyle: { 
+                color: '#fff'
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => ( // this is the configuration of content layout that we'll use in our MainNavigator drawer component
     <ScrollView>
         <SafeAreaView style={styles.container} 
@@ -233,6 +255,21 @@ const MainNavigator = createDrawerNavigator(
                         name='address-card' 
                         type='font-awesome'
                         size={22}
+                        color={tintColor} 
+                    />
+                )
+            }
+        },
+        Favorites: {
+            screen: FavoritesNavigator,
+            navigationOptions: { 
+                title: 'My Favorites',
+                drawerLabel: 'My Favorites',
+                drawerIcon: ({ tintColor }) => (
+                    <Icon 
+                        name='heart' 
+                        type='font-awesome'
+                        size={24}
                         color={tintColor} 
                     />
                 )

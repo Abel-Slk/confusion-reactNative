@@ -16,7 +16,7 @@ const mapDispatchToProps = dispatch => ({
 
 });
 
-function RenderDish(props) { // tried changing to an arrow function to try to solve setting parent state issue - same error
+function RenderDish(props) {
     const dish = props.dish;
     if (dish != null) {
         return (
@@ -44,7 +44,7 @@ function RenderDish(props) { // tried changing to an arrow function to try to so
                         name={'pencil'}// Icon's name attr takes the shortest name! The full FA name is 'fas fa-pencil'!! 
                         type='font-awesome'
                         color='#512DA8'
-                        onPress={() => props.toggleModal()}// also already tried {props.toggleModal} to have it exactly like at https://ourcodeworld.com/articles/read/409/how-to-update-parent-state-from-child-component-in-react - but it looks more like () => props.toggleModal() is correct (see post by alyn000r at https://stackoverflow.com/questions/33720405/react-native-how-to-pass-this-setstate-change-to-parent)
+                        onPress={() => props.toggleModal()}
                     />
                 </View>
                 
@@ -75,7 +75,14 @@ function RenderComments(props) {
         return (
             <View key={index} style={{ margin: 10 }}>{/* key cause it'll be a list item in a FlatList! */}
                 <Text style={{ fontSize: 14 }}>{item.comment}</Text>
-                <Text style={{ fontSize: 12 }}>{item.rating} Stars</Text>
+
+                {/* <Text style={{ fontSize: 12 }}>{item.rating} Stars</Text> */}
+                <Rating style={styles.ratingsInTheCommentsList} 
+                    imageSize={15} 
+                    readonly 
+                    startingValue={item.rating} 
+                />
+
                 <Text style={{ fontSize: 12 }}>
                     {'-- ' + item.author + '   ' + 
                     new Intl.DateTimeFormat('en-US', { 
@@ -152,6 +159,7 @@ class DishDetail extends React.Component {
 
     render() {
         const dishId = this.props.navigation.getParam('dishId', ''); // navigation.getParam() allows me to access the params that are passed into the component. getParam takes as the first parameter the name that we configured for the parameter in the menu component in navigate(). and then we'll also specify a default fallback option here - an empty string there
+        // alt can get it as  const dishId = this.props.route.params.dishId;? One of the guys had it like that
 
         return (
             <ScrollView>
@@ -175,13 +183,14 @@ class DishDetail extends React.Component {
                     <View style={styles.modal}>
                         <Rating style={{ paddingVertical: 10 }}// just to put some space above the rating
                             showRating
+                            startingValue={this.state.rating}
                             onFinishRating={rating => this.ratingCompleted(rating)}
                         />
 
                         <View style={styles.modalRow}>
                             <Input style={styles.modalText}
                                 placeholder="Author"
-                                leftIcon={{ type: 'font-awesome', name: 'user' }}
+                                leftIcon={{ type: 'font-awesome', name: 'user-o' }}
                                 leftIconContainerStyle = {{marginLeft:0, marginRight: 15}}//had a propblem with leftIcon - it was positioned incorrectly - mb due to the version of RNE being too old and FA being too new?Either way - solved it as suggested here https://stackoverflow.com/questions/59189461/react-naitve-element-input-left-icon-displaced - added this leftIconContainerStyle attr and adjusted the margins myself
 
                                 onChangeText={value => this.setState({ author: value })}
@@ -191,7 +200,7 @@ class DishDetail extends React.Component {
                         <View style={styles.modalRow}>
                             <Input style={styles.modalText}
                                 placeholder="Comment"
-                                leftIcon={{ type: 'font-awesome', name: 'comment' }}
+                                leftIcon={{ type: 'font-awesome', name: 'comment-o' }}
                                 leftIconContainerStyle = {{marginLeft:0, marginRight: 15}}
                                 onChangeText={value => this.setState({ comment: value })}
                             />
@@ -230,13 +239,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         margin: 20
     },
-    // formLabel: {
-    //     fontSize: 18,
-    //     flex: 2
-    // },
-    // formItem: {
-    //     flex: 1
-    // },
     modal: {
         justifyContent: 'center',
         margin: 20
@@ -257,6 +259,11 @@ const styles = StyleSheet.create({
     modalText: {
         fontSize: 18,
         margin: 10
+    },
+    ratingsInTheCommentsList: {
+        alignItems: 'flex-start',
+        paddingTop: 7,
+        paddingBottom: 7
     }
 });
 
