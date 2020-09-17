@@ -4,7 +4,7 @@ import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
-import * as Animatable from 'react-native-animatable'; // Animatable is simpler to use, less cumbersome than Aneimated from 'react-native'
+import * as Animatable from 'react-native-animatable'; // Animatable is simpler to use and less cumbersome than Animated from 'react-native'
 
 const mapStateToProps = state => {
     return {
@@ -72,13 +72,15 @@ class About extends React.Component {
     render() {
         return (
             <ScrollView>
-                <Animatable.View animation='fadeInDown' duration={500} delay={0}>{/* note that it's Animatable.View from react-native-animatable, not Animated.View from react-native that we used earlier */}
+
+                <Animatable.View animation='fadeInDown' duration={500} delay={0}>{/* note that it's Animatable.View from react-native-animatable, not Animated.View from react-native */}
                 {/* fadeInDown: fade in down from the top */}
-                {/* delay: after the component is mounted, one second delay before you begin the animation */}
+                {/* delay: after the component is mounted, delay before beginning the animation */}
                     <History />
 
                     <Leaders leaders={this.props.leaders} />
                 </Animatable.View>
+
             </ScrollView>
         );
     }

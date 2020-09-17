@@ -12,6 +12,7 @@ class Contact extends React.Component { // even though we don't need constr with
   render() {
     return (
       <ScrollView>
+
         <Animatable.View animation='fadeInDown' duration={500} delay={0}>
 
           <Card title='Contact Information'>
@@ -30,6 +31,7 @@ class Contact extends React.Component { // even though we don't need constr with
           </Card>
 
         </Animatable.View>
+        
       </ScrollView>
     );
   }

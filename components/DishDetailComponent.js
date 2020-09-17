@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -18,10 +18,58 @@ const mapDispatchToProps = dispatch => ({
 });
 
 function RenderDish(props) {
+
     const dish = props.dish;
+
+    const recognizeDrag = ({ moveX, moveY, dx, dy }) => { // recognize a left to right gesture
+        // in onPanResponderEnd() we're passing the gestureState obj as an arg to recognizeDrag(). Now, gestureState itself contains properties from which we can extract the ones that are of interest to us - we'll extract the four properties that we'll use to recognize the gesture. 
+        // So this is allowed? We define recognizeDrag() to receive exactly those four params - but pass it one obj - and JS doesn't crash but manages to find those 4 params in the properties of that obj! Goddamn didn't think JS allows that!
+
+        // MoveX and moveY are the latest screen coordinates of the recently moved touch gesture. dx is the accumulated distance of the gesture along the X direction. So if you touch the screen at one point and then drag across and then lift, The distance travelled is given by dx and dy. dx along the X axis and dy along the Y axis. 
+
+        // here I am going to recognize only the right to left gesture on the screen. So I'll just look at the dx value. the way distances are measured, the coordinates always start at the TOP-LEFT corner (0:0 there). So a distance traveled from left to right (in the positive direction) will be positive, and from right to left (in the negative direction) will have a negative value. So if dx < -200 (a distance of 200 in the NEGATIVE direction - in the RIGHT TO LEFT direction), then I will return a true to indicate that indeed this was a right to left pan gesture that the user did. And along the Y direction, we don't really care
+        if (dx < -200) // and the distance should be more than 200 in the negative direction (right to left) - so it starts getting recognized only when the swipe is long enough
+            return true;
+        else 
+            return false;
+
+    };
+
+    const panResponder = PanResponder.create({ // takes a config obj where we supply various callbacks for the panResponder
+        onStartShouldSetPanResponder: (e, gestureState) => { // This function will be called when the user's gesture begins on the screen
+        // gestureState contains information that we can use to recognize various aspects about the actual pan gesture that the user does on the screen 
+            return true; // I set it up just to return true to indicate that this PanResponder is going to pick up the pan gesture and start responding to it
+        },
+        onPanResponderEnd: (e, gestureState) => { // this one will be invoked when the user lifts their finger off the screen after performing the gesture. at this point we also receive event and gestureState as args
+        // we need to recognize that the gesture was done and also recognize what kind of gesture it is. So here, based upon the gestureState, I will be able to guess what kind of gesture the user has just performed
+            if (recognizeDrag(gestureState))
+                Alert.alert(
+                    'Add to Favorites',
+                    'Would you like to add ' + dish.name + ' to Favorites?',
+                    [
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel pressed'),
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ? alert('Already favorite!') : props.onPressing()
+                        }
+                    ],
+                    { cancelable: false }
+                )
+
+            return true; // upon the completion of onPanResponderEnd()
+        }
+    });
+
     if (dish != null) {
         return (
-            <Animatable.View animation='fadeInDown' duration={500} delay={0}>{/* fadeInDown for RenderDish and fadeInUp for RenderComments - so that they would move towards each other from top and bottom */}
+            <Animatable.View animation='fadeInDown' duration={500} delay={0}
+                {...panResponder.panHandlers} >
+            {/* fadeInDown for RenderDish and fadeInUp for RenderComments - so that they would move towards each other from top and bottom */}
+            {/* {...panResponder.panHandlers}: All the handler functions (callback functions) that we have implemented will be added in to this View. Now, any gesture that you do on this View, the panHandlers are supposed to handle that gesture */}
 
                 <Card
                     featuredTitle={dish.name}

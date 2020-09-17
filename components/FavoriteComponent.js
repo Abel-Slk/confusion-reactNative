@@ -30,12 +30,12 @@ class Favorites extends React.Component {
 
         const renderMenuItem = ({ item, index }) => {
 
-            const rightButton = [ // This is how we set up things for the Swipeout. give array of option buttons here
+            const rightButton = [ // This is how we set up things for the Swipeout. We give an array of option buttons here (in this case just one button)
                 {
                     text: 'Delete',
                     type: 'delete',
                     onPress: () => {
-                        Alert.alert( // takes title, message, array of buttons
+                        Alert.alert( // takes title, message, array of buttons and options
                             'Delete Favorite?',
                             'Are you sure you wish to delete the favorite dish ' + item.name + '?',
                             [ // array of buttons

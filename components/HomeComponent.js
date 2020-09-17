@@ -76,8 +76,8 @@ class Home extends React.Component {
     }
 
     render() {
-        const xpos1 = this.animatedValue.interpolate({ // meaning that as the value changes map that value to a corresponding different value here
-            inputRange: [0, 1, 3, 5, 8], // this is something that I figured out by trial and error again adjusting these numbers until I got an animation that looked reasonably good (so he took our range of 0-8 and broke it into intervals)
+        const xpos1 = this.animatedValue.interpolate({ // as the value changes, this'll map that value to a corresponding different value here
+            inputRange: [0, 1, 3, 5, 8], // this is something that I figured out by trial and error adjusting these numbers until I got an animation that looked reasonably good. (so he took the range of 0-8 and broke it into intervals)
             outputRange: [1200, 600, 0, -600, -1200] // so if the value is 0, it will be mapped into 1200, 1 to 600, etc.
 
         }); 
@@ -96,10 +96,10 @@ class Home extends React.Component {
 
         return (
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                <Animated.View style={{ width: '100%', transform: [{ translateX: xpos1 }] }}>
-                {/* Animated.View instead of ScrollView now - don't need that anymore cause we're scrolling content horizontally using animation */}
+
+                <Animated.View style={{ width: '100%', transform: [{ translateX: xpos1 }] }}>{/* instead of ScrollView now - don't need that anymore cause we're scrolling content horizontally using animation */}
                 {/* transform is where I specify what kind of transformation I want to apply to this Animated.View. The transform itself takes an array of objects that I want to transform */}
-                {/* translateX: xpos1 - So as a function of time, the x position of whatever is inside this Animated.View will be changed as per how the xpos1 changes. So initially it will be 1200, then it will become 600, 0, -600, and -1200. 1200 would be off the screen to the right side, 600 would still be off the screen to the right side, 0 is right in the middle of the screen, and then -600 and -1200 would be on the left side of the scale. So, this card will slowly come on to this screen from the right side and then go across the screen and then disappear to the left side. */}
+                {/* translateX: xpos1 - So as a function of time, the x position of whatever is inside this Animated.View will be changed as per how the xpos1 changes. So initially it will be 1200, then it will become 600, 0, -600, and -1200. 1200 would be off the screen to the right, 600 would still be off the screen to the right, 0 is right in the middle of the screen, and then -600 and -1200 would be on the left. So, this card will slowly come onto this screen from the right and then go across the screen and then disappear to the left. */}
                 {/* translateX applies xpos1 to the x position of the top left corner of the Card in RenderItem */}
                     <RenderItem 
                         item={this.props.dishes.dishes.filter(dish => dish.featured)[0]}
