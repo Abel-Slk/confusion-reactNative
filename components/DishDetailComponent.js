@@ -21,6 +21,9 @@ function RenderDish(props) {
 
     const dish = props.dish;
 
+    handleViewRef = ref => this.view = ref; // handleViewRef receives the reference as a parameter - a reference to a particular View. And then this variable view will be assigned that reference. I need the reference to the view in order to do an animation on that view programmatically
+    // implemented as an arrow function - so 'this' points to the obj (/class) that DEFINED the function
+
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => { // recognize a left to right gesture
         // in onPanResponderEnd() we're passing the gestureState obj as an arg to recognizeDrag(). Now, gestureState itself contains properties from which we can extract the ones that are of interest to us - we'll extract the four properties that we'll use to recognize the gesture. 
         // So this is allowed? We define recognizeDrag() to receive exactly those four params - but pass it one obj - and JS doesn't crash but manages to find those 4 params in the properties of that obj! Goddamn didn't think JS allows that!
@@ -39,6 +42,11 @@ function RenderDish(props) {
         onStartShouldSetPanResponder: (e, gestureState) => { // This function will be called when the user's gesture begins on the screen
         // gestureState contains information that we can use to recognize various aspects about the actual pan gesture that the user does on the screen 
             return true; // I set it up just to return true to indicate that this PanResponder is going to pick up the pan gesture and start responding to it
+        },
+        onPanResponderGrant: () => { // will be called when the PanResponder starts recognizing the pan gesture on the screen and it has been granted the permission to respond to it
+            this.view.rubberBand(1000) //  perform the rubberBand animation on that particular view for one second. This will return a promise. The value that the promise resolves with (called endState in our code) is basically whether the animation was performed or not - and we can print that if we want: 
+                .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
+            // this rubberBand doesn't fit well though - it responds to any gesture - even small taps! So it's misleading and useless! Better remove it later or substitute it with sth more meaningful!
         },
         onPanResponderEnd: (e, gestureState) => { // this one will be invoked when the user lifts their finger off the screen after performing the gesture. at this point we also receive event and gestureState as args
         // we need to recognize that the gesture was done and also recognize what kind of gesture it is. So here, based upon the gestureState, I will be able to guess what kind of gesture the user has just performed
@@ -66,10 +74,10 @@ function RenderDish(props) {
 
     if (dish != null) {
         return (
-            <Animatable.View animation='fadeInDown' duration={500} delay={0}
-                {...panResponder.panHandlers} >
-            {/* fadeInDown for RenderDish and fadeInUp for RenderComments - so that they would move towards each other from top and bottom */}
-            {/* {...panResponder.panHandlers}: All the handler functions (callback functions) that we have implemented will be added in to this View. Now, any gesture that you do on this View, the panHandlers are supposed to handle that gesture */}
+            <Animatable.View animation='fadeInDown' duration={500} delay={0} // fadeInDown for RenderDish and fadeInUp for RenderComments - so that they would move towards each other from top and bottom
+                ref={this.handleViewRef} // a reference to this View. Meaning this view will call this function handleViewRef() (--though couldn't we just pass a function to be invoked with View in a more simple way? But then, there's no onPress stuff - we need to fire a function on its loading... So mb that's the way...)
+                {...panResponder.panHandlers} // All the handler functions (callback functions) that we have implemented will be added in to this View (spread thouse panHandlers!) Now, any gesture that you do on this View, the panHandlers are supposed to handle that gesture
+            >
 
                 <Card
                     featuredTitle={dish.name}
