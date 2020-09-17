@@ -39,6 +39,7 @@ function RenderDish(props) {
     };
 
     const panResponder = PanResponder.create({ // takes a config obj where we supply various callbacks for the panResponder
+    // see also: http://reactnative.dev/docs/panresponder.html
         onStartShouldSetPanResponder: (e, gestureState) => { // This function will be called when the user's gesture begins on the screen
         // gestureState contains information that we can use to recognize various aspects about the actual pan gesture that the user does on the screen 
             return true; // I set it up just to return true to indicate that this PanResponder is going to pick up the pan gesture and start responding to it
