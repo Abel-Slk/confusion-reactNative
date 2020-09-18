@@ -8,6 +8,8 @@ import Swipeout from 'react-native-swipeout';
 import { deleteFavorite } from '../redux/ActionCreators';
 import * as Animatable from 'react-native-animatable'; 
 
+// Note: for now favorites are persisting between the app closing and opening, but comments don't - that's because we're storing the favorites locally in our redux store, while the comments are being fetched from the server each time! And we haven't yet made postComment() to actually post it to the server like we did in React! When we do it, the comments will be persistent as well
+
 const mapStateToProps = state => {
     return {
         dishes: state.dishes,

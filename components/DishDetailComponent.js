@@ -24,9 +24,9 @@ function RenderDish(props) {
     handleViewRef = ref => this.view = ref; // handleViewRef receives the reference as a parameter - a reference to a particular View. And then this variable view will be assigned that reference. I need the reference to the view in order to do an animation on that view programmatically
     // implemented as an arrow function - so 'this' points to the obj (/class) that DEFINED the function
 
-    const recognizeDrag = ({ moveX, moveY, dx, dy }) => { // recognize a left to right gesture
-        // in onPanResponderEnd() we're passing the gestureState obj as an arg to recognizeDrag(). Now, gestureState itself contains properties from which we can extract the ones that are of interest to us - we'll extract the four properties that we'll use to recognize the gesture. 
-        // So this is allowed? We define recognizeDrag() to receive exactly those four params - but pass it one obj - and JS doesn't crash but manages to find those 4 params in the properties of that obj! Goddamn didn't think JS allows that!
+    const recognizeRightToLeftDrag = ({ moveX, moveY, dx, dy }) => { // recognize a left to right gesture
+        // in onPanResponderEnd() we're passing the gestureState obj as an arg to recognizeRightToLeftDrag(). Now, gestureState itself contains properties from which we can extract the ones that are of interest to us - we'll extract the four properties that we'll use to recognize the gesture. 
+        // So this is allowed? We define recognizeRightToLeftDrag() to receive exactly those four params - but pass it one obj - and JS doesn't crash but manages to find those 4 params in the properties of that obj! Goddamn didn't think JS allows that!
 
         // MoveX and moveY are the latest screen coordinates of the recently moved touch gesture. dx is the accumulated distance of the gesture along the X direction. So if you touch the screen at one point and then drag across and then lift, The distance travelled is given by dx and dy. dx along the X axis and dy along the Y axis. 
 
@@ -38,6 +38,13 @@ function RenderDish(props) {
 
     };
 
+    const recognizeLeftToRightDrag = gestureState => { // recognize comment
+        if (gestureState.dx > 200)
+            return true;
+        else 
+            return false;
+    }
+
     const panResponder = PanResponder.create({ // takes a config obj where we supply various callbacks for the panResponder
     // see also: http://reactnative.dev/docs/panresponder.html
         onStartShouldSetPanResponder: (e, gestureState) => { // This function will be called when the user's gesture begins on the screen
@@ -47,11 +54,11 @@ function RenderDish(props) {
         onPanResponderGrant: () => { // will be called when the PanResponder starts recognizing the pan gesture on the screen and it has been granted the permission to respond to it
             this.view.rubberBand(1000) //  perform the rubberBand animation on that particular view for one second. This will return a promise. The value that the promise resolves with (called endState in our code) is basically whether the animation was performed or not - and we can print that if we want: 
                 .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
-            // this rubberBand doesn't fit well though - it responds to any gesture - even small taps! So it's misleading and useless! Better remove it later or substitute it with sth more meaningful!
+        // this rubberBand doesn't fit well though - it responds to ANY gesture - even small taps! So it's misleading and useless! Better remove it later or substitute it with sth more meaningful!
         },
         onPanResponderEnd: (e, gestureState) => { // this one will be invoked when the user lifts their finger off the screen after performing the gesture. at this point we also receive event and gestureState as args
         // we need to recognize that the gesture was done and also recognize what kind of gesture it is. So here, based upon the gestureState, I will be able to guess what kind of gesture the user has just performed
-            if (recognizeDrag(gestureState))
+            if (recognizeRightToLeftDrag(gestureState))
                 Alert.alert(
                     'Add to Favorites',
                     'Would you like to add ' + dish.name + ' to Favorites?',
@@ -68,8 +75,10 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 )
+            else if (recognizeLeftToRightDrag(gestureState))
+                props.toggleModal();
 
-            return true; // upon the completion of onPanResponderEnd()
+            return true; // upon the completion of onPanResponderEnd() (note that it's different from having else in front of it - cause with else it would mean execute this ONLY IF all the prev conditions were not met - but here we say to return true in the end EITHER WAY - regardless of whether any conditions were met above! And notice that usually when we have else return false, we also have return statements inside each if/else if! But here we have a return only at the very end! So it doesn't really mean else here!)
         }
     });
 
