@@ -6,6 +6,7 @@ import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoriteComponent';
+import Login from './LoginComponent';
 import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 import { Icon } from 'react-native-elements';
@@ -172,6 +173,27 @@ const FavoritesNavigator = createStackNavigator(
     }
 );
 
+const LoginNavigator = createStackNavigator(
+    {
+        Login: { 
+            screen: Login
+        }
+    },
+    {
+        navigationOptions: ({ navigation }) => ({ 
+            headerStyle: { 
+                backgroundColor: '#512DA8'
+            },
+            headerTintColor: '#fff', 
+            headerTitleStyle: { 
+                color: '#fff'
+            },
+            headerLeft: <Icon name='menu' size={26} color='white' 
+                onPress={() => navigation.toggleDrawer()} />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => ( // this is the configuration of content layout that we'll use in our MainNavigator drawer component
     <ScrollView>
         <SafeAreaView style={styles.container} 
@@ -199,7 +221,22 @@ const CustomDrawerContentComponent = props => ( // this is the configuration of 
 
 // and finally we collect all those into our drawer navigator:
 const MainNavigator = createDrawerNavigator(
-    {
+    { // routeConfigs param
+        Login: { // we want to place Login at the top of the drawer. But the default way a DrawerNavigator works is that this first entry in the drawer would become the first screen shown. And we don't want the login screen to be shown first. Instead you want to just show the home screen. The login should be something that the user explicitly does. So, that's why I will set up the initialRouteName in the config param below to point to the Home component
+            screen: LoginNavigator,
+            navigationOptions: {
+                title: 'Login', // not sure what title and drawerLabel do here - tried removing them and didn't see any difference! The title is still 'Home' in the drawer - it's probably received from the HoveNavigator screen, which receives it from the Home component!
+                drawerLabel: 'Login',
+                drawerIcon: ({ tintColor }) => ( // drawerIcon will receive (automatically!) tintColor as one of the params (where from though? I guess can see in the docs if necessary - but it might be deprecated already anyway). tintColor will specify how to render the icon in the drawer. this is specified as an arrow function
+                    <Icon 
+                        name='sign-in' 
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                )
+            }
+        },
         Home: {
             screen: HomeNavigator,
             navigationOptions: {
@@ -291,7 +328,8 @@ const MainNavigator = createDrawerNavigator(
             }
         }
     },
-    {
+    { // config param
+        initialRouteName: 'Home',
         drawerBackgroundColor: '#D1C4E9',
         contentComponent: CustomDrawerContentComponent // here we specify the layout of the drawer to be what I have specified in CustomDrawerContentComponent. how did I figure this out? Reading the documentation. So reading the documentation reveals a lot of interesting information
     }

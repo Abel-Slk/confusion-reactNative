@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Modal, Alert } from 'react-native';
-import { Card } from 'react-native-elements';
+import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable'; 
 
@@ -22,10 +21,6 @@ class Reservation extends React.Component {
 
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
-    }
-
-    confirmReservation() {
-
     }
 
     handleReservation() {

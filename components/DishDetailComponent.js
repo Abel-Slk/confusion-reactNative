@@ -275,7 +275,7 @@ class DishDetail extends React.Component {
                             <Input style={styles.modalText}
                                 placeholder="Comment"
                                 leftIcon={{ type: 'font-awesome', name: 'comment-o' }}
-                                leftIconContainerStyle = {{marginLeft:0, marginRight: 15}}
+                                leftIconContainerStyle = {{ marginLeft:0, marginRight: 15}}
                                 onChangeText={value => this.setState({ comment: value })}
                             />
                         </View>
