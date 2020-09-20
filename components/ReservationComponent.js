@@ -3,6 +3,10 @@ import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Alert } fro
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable'; 
 
+// import { Permissions, Notifications } from 'expo'; // not used anymore
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions'; //  We need Permissions from the device platform in order to access the Notification Bar. So we will first ask for Permissions to access the Notification Bar and then after that we will be able to put the Notifications.
+
 class Reservation extends React.Component {
     constructor(props) {
         super(props);
@@ -26,13 +30,10 @@ class Reservation extends React.Component {
     handleReservation() {
         console.log(JSON.stringify(this.state));
 
-        // this.toggleModal(); // will toggle it on - we'll cause the modal to appear with the submitted data
-        // now instead of that we have:
+        let message = `Number of Guests: ${this.state.guests} \nSmoking: ${this.state.smoking} \nDate and Time: ${this.state.date}`
         Alert.alert(
             'Reservation Confirmation',
-`Number of Guests: ${this.state.guests}
-Smoking: ${this.state.smoking} 
-Date and Time: ${this.state.date}`,
+            message,
             [
                 {
                     text: 'Cancel',
@@ -41,7 +42,10 @@ Date and Time: ${this.state.date}`,
                 },
                 {
                     text: 'OK',
-                    onPress: () => this.resetForm()
+                    onPress: () => {
+                        this.presentLocalNotification(this.state.date);
+                        this.resetForm();
+                    }
                 }
             ],
             { cancelable: false }
@@ -55,6 +59,48 @@ Date and Time: ${this.state.date}`,
             date: '',
 
             showModal: false // this is not necessary on iOS, but I'll leave it for safety - cause I haven't tested the app on Android, 
+        });
+    }
+
+    async obtainNotificationPermission() {
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS); // await for permission to be obtained asynchronously, and when that happens, ask for Permissions.USER_FACING_NOTIFICATIONS. So that's what we are trying to create in this application, User Facing Notifications. If we don't get it, then, we won't be able to create the Notification. 
+        if (permission.status !== 'granted') { // this permission object will contain a status property which should be granted or not granted. So when the permission is returned, we'll check if the status is granted. if not, then I will ask for permission again: 
+            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS); // So I'm trying to ask for the same permission two times. the first time we're checking if the Permission ALREADY EXISTS for us. If it is granted, then it's okay. Otherwise, we'll ASK THE USER for the permission, and if that is granted, then we can proceed forward
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to show notification');
+            }
+        }
+        return permission;
+    }
+
+    async presentLocalNotification(date) {
+        await this.obtainNotificationPermission(); // so if it's with permission.status !== 'granted', it'll somwhow automatically stop presentLocalNotification()?
+
+        let formattedDate = new Intl.DateTimeFormat(
+            'en-US', 
+            { 
+                month: 'short', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }
+        ).format(new Date(Date.parse(date))); 
+
+        Notifications.presentNotificationAsync({ // inside here we will configure the Local Notification to be presented
+        // NOTE: Muppala had here presentLocalNotificationAsync(), and it didn't work! I found out that it doesn't exist anymore, and instead we have presentNotificationAsync() - but even it has been deprecated now: https://docs.expo.io/versions/v38.0.0/sdk/notifications/#presentnotificationasynccontent-notificationcontentinput-identifier-string-promisestring
+        // so don't spend too much time on this stuff - a lot of it might be deprecated already!
+            title: 'Your Reservation',
+            body: 'Requested reservation for ' + formattedDate, // message to user
+            // we can also configure a few things:
+            ios: {
+                sound: true
+            },
+            android: {
+                sound: true,
+                // android also allows additional configuration (see pop-ups):
+                vibrate: true,
+                color: '#512DA8'
+            }
         });
     }
 
