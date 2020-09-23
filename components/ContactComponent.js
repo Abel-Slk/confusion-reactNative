@@ -1,8 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
-import { Card, Button, Icon } from 'react-native-elements';
+import { Card, Button, Icon } from 'react-native-elements'; // RNE's Button allows more than standard RN's Button
 import * as Animatable from 'react-native-animatable'; 
-// import { MailComposer } from 'expo'; 
 import * as MailComposer from 'expo-mail-composer';
 
 class Contact extends React.Component { // even though we don't need constr with state here, still had to implement this as a class - to be able to put static navigationOptions in it!
