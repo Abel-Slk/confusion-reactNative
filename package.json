@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^5.9.7",
     "@types/react-navigation": "^3.4.0",
     "expo": "~38.0.8",
     "expo-asset": "~8.1.7",

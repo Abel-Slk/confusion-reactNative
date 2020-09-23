@@ -7,7 +7,8 @@ import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoriteComponent';
 import Login from './LoginComponent';
-import { View, Platform, Image, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, Platform, Image, StyleSheet, ScrollView, Text, ToastAndroid } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation'; // downgraded to react-navigation@2.0.1 instead of the latest version - '@react-navigation/native' (v5). 
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -336,12 +337,83 @@ const MainNavigator = createDrawerNavigator(
 );
 
 class Main extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            unsubscribe: () => { }
+        }
+    }
 
     componentDidMount() {
         this.props.fetchDishes();
         this.props.fetchComments();
         this.props.fetchPromos();
         this.props.fetchLeaders();
+
+        
+        NetInfo.fetch() // Muppala had here NetInfo.getConnectionInfo()
+            .then(connectionInfo => {
+                if (Platform.OS === 'ios') {
+                    alert('Initial Network Connectivity Type: '+ connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType); // if will want to implement it better than using a simple alert - see suggestions at https://stackoverflow.com/questions/18680891/displaying-a-message-in-ios-which-has-the-same-functionality-as-toast-in-android
+                }
+                else
+                    ToastAndroid.show(
+                        'Initial Network Connectivity Type: '+ connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType, ToastAndroid.LONG); // ToastAndroid.LONG for a long duration
+            });
+
+        let returnedFunction = NetInfo.addEventListener(this.handleConnectivityChange); // see the addEventListener()'s pop-up
+        // Muppala had it as NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
+        this.setState({ unsubscribe: returnedFunction }) // we need to store somewhere the function returned by NetInfo.addEventListener() - to be able to use it later in componentWillUnmount(). To have it visible outside of the current function, componentDidMount(), had to store it in the state of the component
+        
+    }
+
+    componentWillUnmount() {
+        this.state.unsubscribe(); // instead of NetInfo.removeEventListener('connectionChange', this.handleConnectivityChange); - now deprecated, doesn't work anymore
+    }
+
+    handleConnectivityChange = connectionInfo => {
+        switch(connectionInfo.type) {
+            case 'none':
+                if (Platform.OS === 'ios') {
+                    alert('You are now offline');
+                }
+                else {
+                    ToastAndroid.show('You are now offline', ToastAndroid.LONG);
+                }
+                break; // When JS reaches a break keyword, it breaks out of the switch block. It is not necessary to break the last case in a switch block. The block breaks (ends) there anyway. 
+                // Note: If you omit the break statement, the next case will be executed even if the evaluation does not match the case. (Really? Then Why didn't we use breaks after each case in our reducers?..)
+
+            case 'wifi':
+                if (Platform.OS === 'ios') {
+                    alert('You are now connected to WiFi');
+                }
+                else {
+                    ToastAndroid.show('You are now connected to WiFi', ToastAndroid.LONG);
+                }
+                break;
+
+            case 'cellular':
+                if (Platform.OS === 'ios') {
+                    alert('You are now connected to a cellular network');
+                }
+                else {
+                    ToastAndroid.show('You are now connected to a cellular network', ToastAndroid.LONG);
+                }
+                break;
+
+            case 'unknown':
+                if (Platform.OS === 'ios') {
+                    alert('You now have an unknown connection');
+                }
+                else {
+                    ToastAndroid.show('You now have an unknown connection', ToastAndroid.LONG);
+                }
+                break;
+
+            default: 
+                break; // break here is actually not needed if default is placed last!
+        }
     }
 
     render() {
