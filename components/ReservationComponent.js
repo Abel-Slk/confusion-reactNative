@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import * as Animatable from 'react-native-animatable'; 
-
-// import { Permissions, Notifications } from 'expo'; // not used anymore
+import * as Animatable from 'react-native-animatable';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions'; //  We need Permissions from the device platform in order to access the Notification Bar. So we will first ask for Permissions to access the Notification Bar and then after that we will be able to put the Notifications.
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends React.Component {
     constructor(props) {
@@ -30,7 +29,7 @@ class Reservation extends React.Component {
     handleReservation() {
         console.log(JSON.stringify(this.state));
 
-        let message = `Number of Guests: ${this.state.guests} \nSmoking: ${this.state.smoking} \nDate and Time: ${this.state.date}`
+        let message = `Number of Guests: ${this.state.guests} \nSmoking: ${this.state.smoking} \nDate and Time: ${this.state.date}`;
         Alert.alert(
             'Reservation Confirmation',
             message,
@@ -49,7 +48,10 @@ class Reservation extends React.Component {
                 }
             ],
             { cancelable: false }
-        )
+        );
+
+
+        this.addReservationToCalendar(this.state.date); 
     }
 
     resetForm() {
@@ -102,6 +104,46 @@ class Reservation extends React.Component {
                 color: '#512DA8'
             }
         });
+    }
+
+    async obtainCalendarPermission() {
+        let permission = await Permissions.getAsync(Permissions.CALENDAR); 
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission for Calendar not granted');
+            }
+        }
+        return permission;
+    }
+    async obtainCalendarPermission2() {
+        let permission = await Permissions.getAsync(Permissions.REMINDERS); 
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.REMINDERS);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission for Reminders not granted');
+            }
+        }
+        return permission;
+    }
+
+    async addReservationToCalendar(date) {
+        await this.obtainCalendarPermission();
+        await this.obtainCalendarPermission2();
+
+        const defaultCalendar = 
+        Calendar.createEventAsync(
+            (await Calendar.getDefaultCalendarAsync()).id, // this is the syntax that popped up automatically when I tried typing here "Calendar.getDefaultCalendarAsync().id"! Got the idea for trying to access id here from the description of Calendar.getDefaultCalendarAsync() and https://docs.expo.io/versions/latest/sdk/calendar/?redirected#calendar. but they say it's iOS only - so to include Android I guess I gotta add some more code in here! Muppala had Calendar.DEFAULT - but it doesn't exist anymore! So for Android gotta find some other way!
+            { // details
+                title:  'Con Fusion Table Reservation',
+                startDate: new Date(Date.parse(date)), // convert the Date ISO string into a Date object
+                endDate: new Date(Date.parse(date) + 2*60*60*1000), // we want to add 2 hours - but we gotta write it in milliseconds. 1 hour = 60 min = 60*60 sec = 3600 sec = 3600*1000 msec
+                // startDate: new Date(Date.parse(date)), // convert the Date ISO string into a Date object
+                // endDate: new Date(Date.parse(date) + 2*60*60*1000), // we want to add 2 hours - but we gotta write it in milliseconds. 1 hour = 60 min = 60*60 sec = 3600 sec = 3600*1000 msec
+                timeZone: 'Asia/Hong_Kong',
+                location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+            }
+        ); 
     }
 
     render() {

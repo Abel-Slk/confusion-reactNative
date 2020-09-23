@@ -362,7 +362,7 @@ class Main extends React.Component {
                         'Initial Network Connectivity Type: '+ connectionInfo.type + ', effectiveType: ' + connectionInfo.effectiveType, ToastAndroid.LONG); // ToastAndroid.LONG for a long duration
             });
 
-        let returnedFunction = NetInfo.addEventListener(this.handleConnectivityChange); // see the addEventListener()'s pop-up
+        const returnedFunction = NetInfo.addEventListener(this.handleConnectivityChange); // see the addEventListener()'s pop-up
         // Muppala had it as NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
         this.setState({ unsubscribe: returnedFunction }) // we need to store somewhere the function returned by NetInfo.addEventListener() - to be able to use it later in componentWillUnmount(). To have it visible outside of the current function, componentDidMount(), had to store it in the state of the component
         

@@ -151,9 +151,9 @@ class RegisterTab extends React.Component {
 
         if (cameraPermission.status === 'granted' 
             && cameraRollPermission.status === 'granted') {
-            let capturedImage = await ImagePicker.launchCameraAsync({
+            let capturedImage = await ImagePicker.launchCameraAsync({ // https://docs.expo.io/versions/latest/sdk/imagepicker/?redirected#imagepickerlaunchcameraasyncoptions
                 allowsEditing: true, // after the image is captured we can edit it initially
-                aspect: [4, 3] // aspect ratio for the image
+                aspect: [4, 3] // aspect ratio for the image (Android only)
             });
 
             if (!capturedImage.cancelled) { // when the user is trying to capture the image from the camera, it's possible to cancel the capture. in that case, capturedImage.cancelled will be set to true, which means that we did not get the image, so there is nothing that you can do about it. But if not, then We get hold of the image
@@ -162,7 +162,22 @@ class RegisterTab extends React.Component {
         }
     }
 
-    // after taking an image:
+    getImageFromGallery = async () => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL); // https://docs.expo.io/versions/latest/sdk/imagepicker/?redirected#imagepickerlaunchimagelibraryasyncoptions
+
+        if (cameraRollPermission.status === 'granted') {
+            let selectedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [4, 3]
+            });
+
+            if (!selectedImage.cancelled) { 
+                this.processImage(selectedImage.uri);
+            }
+        }
+    }
+
+    // after taking/selecting a photo:
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulateAsync(
             imageUri, // uri of image to manipulate
@@ -204,7 +219,7 @@ class RegisterTab extends React.Component {
 
     render() {
         return (
-            <ScrollView>{/* since this is a huge file, I'm going to configure this to be inside a ScrollView - Just to be safe */}
+            <ScrollView>{/* this is a huge file - so Just to be safe */}
                 <View style={styles.container}>
 
                     <View style={styles.imageContainer}>
@@ -214,8 +229,12 @@ class RegisterTab extends React.Component {
                         />
 
                         <Button 
-                            title='Take a Photo'
+                            title='Camera'
                             onPress={this.getImageFromCamera}
+                        />
+                        <Button 
+                            title='Gallery'
+                            onPress={this.getImageFromGallery}
                         />
                     </View>
 
@@ -316,6 +335,7 @@ const styles = StyleSheet.create({ // should be outside any class -- I guess so 
     imageContainer: {
         flex: 1, 
         flexDirection: 'row',
+        justifyContent: 'space-between',
         margin: 20
     },
     image: {
