@@ -6,6 +6,8 @@ import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { createBottomTabNavigator } from 'react-navigation';
 import { baseUrl } from '../shared/baseUrl';
+import { Asset } from 'expo-asset';
+import * as ImageManipulator from "expo-image-manipulator";
 
 class LoginTab extends React.Component {
     constructor(props) {
@@ -143,7 +145,7 @@ class RegisterTab extends React.Component {
         };
     }
 
-    getImageFromCamera = async () => { // note - an async anonymous function
+    getImageFromCamera = async () => { // implementing it asn an arrow function for some reason (does it have sth to do with using async?)
         const cameraPermission = await Permissions.askAsync(Permissions.CAMERA);
         const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
@@ -154,10 +156,23 @@ class RegisterTab extends React.Component {
                 aspect: [4, 3] // aspect ratio for the image
             });
 
-            if (!capturedImage.cancelled) { // when the user is trying to capture the image from the camera, it's possible that we can cancel the capture. So in that case, the capturedImage.cancelled will be set to true, which means that we did not get the image, so there is nothing that you can do about it. But if not, then We get hold of the image
-                this.setState({ imageUrl: capturedImage.uri }); // the camera returns this URI which is a URI of the image on the device's file storage. We'll use it to update the URL of our logo
+            if (!capturedImage.cancelled) { // when the user is trying to capture the image from the camera, it's possible to cancel the capture. in that case, capturedImage.cancelled will be set to true, which means that we did not get the image, so there is nothing that you can do about it. But if not, then We get hold of the image
+                this.processImage(capturedImage.uri); // launchCameraAsync() creates a new image with the property called uri which is a URI of the image on the device's file storage
             }
         }
+    }
+
+    // after taking an image:
+    processImage = async (imageUri) => {
+        let processedImage = await ImageManipulator.manipulateAsync(
+            imageUri, // uri of image to manipulate
+            [ // actions to be taken
+                { resize: { width: 400 }} // when you grab the image from the camera, your image will be as per the resolution of the camera, so it will be a huge image. we are only using that image to represent the user's image in the user's profile, so we just need a small image. So we will resize that image such that they will set the width to 400 and correspondingly the aspect ratio will be maintained so the height will correspondingly be adjusted. So it will be 400 by 300 pixels, because you already adjusted the aspect ratio as 4:3 in getImageFromCamera()
+            ],
+            { format: 'png' } // output format options
+        );
+
+        this.setState({ imageUrl: processedImage.uri }); // We'll use it to update the URL of our profile photo
     }
 
     static navigationOptions = {
