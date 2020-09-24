@@ -145,7 +145,7 @@ class RegisterTab extends React.Component {
         };
     }
 
-    getImageFromCamera = async () => { // implementing it asn an arrow function for some reason (does it have sth to do with using async?)
+    getImageFromCamera = async () => { // implementing it as an arrow function for some reason (does it have sth to do with using async?)
         const cameraPermission = await Permissions.askAsync(Permissions.CAMERA);
         const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 

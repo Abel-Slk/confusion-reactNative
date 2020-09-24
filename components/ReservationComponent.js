@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, Picker, Switch, ScrollView, Alert, Platform } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable';
 import * as Notifications from 'expo-notifications';
@@ -29,7 +29,8 @@ class Reservation extends React.Component {
     handleReservation() {
         console.log(JSON.stringify(this.state));
 
-        let message = `Number of Guests: ${this.state.guests} \nSmoking: ${this.state.smoking} \nDate and Time: ${this.state.date}`;
+        const smoking = this.state.smoking ? 'Yes' : 'No';
+        let message = `Number of Guests: ${this.state.guests} \nSmoking: ${smoking} \nDate and Time: ${this.state.date}`;
         Alert.alert(
             'Reservation Confirmation',
             message,
@@ -43,15 +44,13 @@ class Reservation extends React.Component {
                     text: 'OK',
                     onPress: () => {
                         this.presentLocalNotification(this.state.date);
+                        this.addReservationToCalendar(this.state.date); 
                         this.resetForm();
                     }
                 }
             ],
             { cancelable: false }
         );
-
-
-        this.addReservationToCalendar(this.state.date); 
     }
 
     resetForm() {
@@ -116,7 +115,8 @@ class Reservation extends React.Component {
         }
         return permission;
     }
-    async obtainCalendarPermission2() {
+    // On iOS also need to get permission for reminders:
+    async obtainRemindersPermission() { 
         let permission = await Permissions.getAsync(Permissions.REMINDERS); 
         if (permission.status !== 'granted') {
             permission = await Permissions.askAsync(Permissions.REMINDERS);
@@ -128,13 +128,17 @@ class Reservation extends React.Component {
     }
 
     async addReservationToCalendar(date) {
-        await this.obtainCalendarPermission();
-        await this.obtainCalendarPermission2();
+        if (Platform.OS === 'ios') {
+            await this.obtainCalendarPermission();
+            await this.obtainRemindersPermission();
+        }
+        else {
+            await this.obtainCalendarPermission();
+        }
 
-        const defaultCalendar = 
-        Calendar.createEventAsync(
+        await Calendar.createEventAsync(
             (await Calendar.getDefaultCalendarAsync()).id, // this is the syntax that popped up automatically when I tried typing here "Calendar.getDefaultCalendarAsync().id"! Got the idea for trying to access id here from the description of Calendar.getDefaultCalendarAsync() and https://docs.expo.io/versions/latest/sdk/calendar/?redirected#calendar. but they say it's iOS only - so to include Android I guess I gotta add some more code in here! Muppala had Calendar.DEFAULT - but it doesn't exist anymore! So for Android gotta find some other way!
-            { // details
+            { // details of event
                 title:  'Con Fusion Table Reservation',
                 startDate: new Date(Date.parse(date)), // convert the Date ISO string into a Date object
                 endDate: new Date(Date.parse(date) + 2*60*60*1000), // we want to add 2 hours - but we gotta write it in milliseconds. 1 hour = 60 min = 60*60 sec = 3600 sec = 3600*1000 msec
