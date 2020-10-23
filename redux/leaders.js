@@ -17,6 +17,6 @@ export const leaders = (state = {
             return {...state, isLoading: false, errMess: null, leaders: action.payload} 
 
         default: 
-            return state; // return state unmodified
+            return state;
     }
 };

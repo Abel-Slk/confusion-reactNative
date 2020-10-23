@@ -172,7 +172,7 @@ export const postComment = (dishId, rating, author, comment) => dispatch => {
         author: author,
         comment: comment
     }
-    newComment.date = new Date().toISOString(); // the current date. toISOString() cause date is stored in the ISO format in our comments obj
+    newComment.date = new Date().toISOString(); 
     
     setTimeout(() => { // simulating a server delay 
         dispatch(addComment(newComment));

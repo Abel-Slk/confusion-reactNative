@@ -8,7 +8,7 @@ import Swipeout from 'react-native-swipeout';
 import { deleteFavorite } from '../redux/ActionCreators';
 import * as Animatable from 'react-native-animatable'; 
 
-// Note: for now favorites are persisting between the app closing and opening, but comments don't - that's because we're storing the favorites locally in our redux store, while the comments are being fetched from the server each time! And we haven't yet made postComment() to actually post it to the server like we did in React! When we do it, the comments will be persistent as well
+// Note: for now favorites are persisting between the app closing and opening, but comments don't - that's because we're storing the favorites locally in our redux store, while the comments are being fetched from the server each time! haven't yet made postComment() to actually post it to the server like in the React app
 
 const mapStateToProps = state => {
     return {
@@ -37,7 +37,7 @@ class Favorites extends React.Component {
                     text: 'Delete',
                     type: 'delete',
                     onPress: () => {
-                        Alert.alert( // takes title, message, array of buttons and options
+                        Alert.alert(
                             'Delete Favorite?',
                             'Are you sure you wish to delete the favorite dish ' + item.name + '?',
                             [ // array of buttons
@@ -50,15 +50,15 @@ class Favorites extends React.Component {
                                     text: 'OK', 
                                     onPress: () => this.props.deleteFavorite(item.id)
                                 }
-                            ], // and we can also have an additional param with options: 
-                            { cancelable: false } // that means that for this alert dialog, the user either has to press "Cancel" explicitly or press "OK" explicitly. They can't just dismiss the dialogue. Note: @platform — android
+                            ], // additional param with options: 
+                            { cancelable: false } // for this alert dialog, the user either has to press "Cancel" explicitly or press "OK" explicitly. They can't just dismiss the dialogue. Note: @platform — android
                         );
                     }
                 }
             ];
 
             return (
-                <Swipeout right={rightButton} autoClose={true}>{/* Swipeout wraps an item in a list. autoclose - so when we click on a button, the Swipeout will close */}
+                <Swipeout right={rightButton} autoClose={true}>
                     <Animatable.View animation='fadeInRightBig' duration={400}>
 
                         <ListItem

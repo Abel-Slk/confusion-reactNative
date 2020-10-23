@@ -1,10 +1,10 @@
 import React from 'react';
 import { ScrollView, Text, StyleSheet } from 'react-native';
-import { Card, Button, Icon } from 'react-native-elements'; // RNE's Button allows more than standard RN's Button
+import { Card, Button, Icon } from 'react-native-elements'; 
 import * as Animatable from 'react-native-animatable'; 
 import * as MailComposer from 'expo-mail-composer';
 
-class Contact extends React.Component { // even though we don't need constr with state here, still had to implement this as a class - to be able to put static navigationOptions in it!
+class Contact extends React.Component { 
 
   static navigationOptions = { 
     title: 'Contact Us' 
@@ -12,7 +12,7 @@ class Contact extends React.Component { // even though we don't need constr with
 
   sendMail() {
     MailComposer.composeAsync({
-      recepients: ['confusion@food.net'], // array of recepients
+      recepients: ['confusion@food.net'], 
       subject: 'Enquiry',
       body: 'To whom it may concern:'
     });
@@ -38,7 +38,7 @@ class Contact extends React.Component { // even though we don't need constr with
                 </Text>
             </Text> 
 
-            <Button // this button is from react-native elements, and this is an enhanced button than the button that we use from react-native. This allows me to even specify the icon to be used in the button
+            <Button
               title='  Send Email'
               buttonStyle={{ backgroundColor: '#512DA8', marginTop: 30 }}
               icon={<Icon type='font-awesome' name='envelope-o' color='white' />}

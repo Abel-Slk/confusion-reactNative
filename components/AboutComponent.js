@@ -4,11 +4,11 @@ import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
-import * as Animatable from 'react-native-animatable'; // Animatable is simpler to use and less cumbersome than Animated from 'react-native'
+import * as Animatable from 'react-native-animatable'; 
 
 const mapStateToProps = state => {
     return {
-        leaders: state.leaders // will become available in the connected component as this.props.leaders
+        leaders: state.leaders 
     }
 }
 
@@ -73,9 +73,7 @@ class About extends React.Component {
         return (
             <ScrollView>
 
-                <Animatable.View animation='fadeInDown' duration={500} delay={0}>{/* note that it's Animatable.View from react-native-animatable, not Animated.View from react-native */}
-                {/* fadeInDown: fade in down from the top */}
-                {/* delay: after the component is mounted, delay before beginning the animation */}
+                <Animatable.View animation='fadeInDown' duration={500} delay={0}>
                     <History />
 
                     <Leaders leaders={this.props.leaders} />
@@ -87,4 +85,4 @@ class About extends React.Component {
 
 }
 
-export default connect(mapStateToProps)(About); // in the React course earlier, I had one main component which was the only one that was connected to the redux store. Here I connect EACH component directly to the redux store. These are Two different ways of implementing how you interact with the redux store
+export default connect(mapStateToProps)(About); // in the React app earlier I had one main component which was the only one that was connected to the redux store. Here I connect EACH component directly to the redux store. These are Two different ways of implementing interaction with the redux store
