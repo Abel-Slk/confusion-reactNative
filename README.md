@@ -40,7 +40,9 @@ I haven't submitted the app to the iOS App Store and Google Play Store yet, so c
 - `cd json-server`
 - start a json-server serving the JSON data from the db.json file and static files from the json-server/public folder:
 
-`json-server --watch db.json -p 3005`   // start the server at port 3005 (the same port that was configured by ngrok)
+`json-server --watch db.json -p 3005`   
+
+This would start the json-server at port number 3005 (the same port that was configured by ngrok).
 
 #### Start the client 
 - Make sure the mobile device and the computer are connected to the same Wi-Fi network
